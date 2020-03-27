@@ -1,10 +1,12 @@
 import { Logger } from '../server/log';
 import { validate } from './validate';
 import { downloadWiremock } from '../server/wiremock/index';
+import { startServer } from '../server/express';
 
 const logger = new Logger('launcher');
 
-export function run() {
+export async function run() {
     const config = validate();
-    downloadWiremock(config.wiremock);
+    await downloadWiremock(config.wiremock);
+    await startServer();
 }
