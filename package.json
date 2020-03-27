@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/n0th1ng-else/hummock#readme",
   "dependencies": {
+    "@types/node": "12.12.31",
+    "chalk": "3.0.0",
     "express": "4.17.1",
     "ts-node": "8.8.1",
     "typescript": "3.8.3"
