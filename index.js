@@ -1,8 +1,8 @@
 try {
-    require('ts-node').register();
+	require('ts-node').register();
 } catch (err) {
-    console.error(err);
-    process.exit(1);
+	console.error(err);
+	process.exit(1);
 }
 
 const { Logger } = require('./src/server/log.ts');

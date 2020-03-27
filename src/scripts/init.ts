@@ -1,3 +1,3 @@
 export function run() {
-    // TODO generate hummock.json
+	// TODO generate hummock.json
 }
