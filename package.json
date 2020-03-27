@@ -1,0 +1,39 @@
+{
+  "name": "hummock",
+  "version": "1.0.0",
+  "description": "Caching responses from real api and use it as the stubbed data",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/n0th1ng-else/hummock.git"
+  },
+  "keywords": [
+    "mock",
+    "wiremock",
+    "stubb"
+  ],
+  "author": "Sergey Nikitin <srg.post@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/n0th1ng-else/hummock/issues"
+  },
+  "homepage": "https://github.com/n0th1ng-else/hummock#readme",
+  "dependencies": {
+    "@types/express": "4.11.1",
+    "@types/node": "12.12.31",
+    "@types/progress": "2.0.3",
+    "axios": "0.19.2",
+    "chalk": "3.0.0",
+    "express": "4.17.1",
+    "progress": "2.0.3",
+    "ts-node": "8.8.1",
+    "typescript": "3.8.3"
+  },
+  "devDependencies": {
+    "prettier": "2.0.2"
+  }
+}
