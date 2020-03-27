@@ -46,6 +46,6 @@ class ServerForRecord {
     constructor(public readonly host: string) {}
 }
 
-class WiremockConfig {
+export class WiremockConfig {
     constructor(public readonly version: string) {}
 }

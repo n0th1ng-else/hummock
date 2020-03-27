@@ -1,14 +1,13 @@
-import * as chalk from 'chalk';
 import { existsSync, readFileSync } from 'fs';
 import { defaultConfigPath } from "../config/index";
-import { Logger } from '../server/log';
+import { Logger, pRed, pYellow } from '../server/log';
 import { HummockConfig, HummockConfigDto } from '../models/config';
 
-const logger = new Logger();
+const logger = new Logger('config');
 
 export function validate(configPath = defaultConfigPath): HummockConfig {
     if (!existsSync(configPath)) {
-        logger.error(chalk.red(`Unable to find config file. Tried ${chalk.yellow(configPath)}, but have no luck. Does the file exists? 🤔`));
+        logger.error(pRed(`Unable to find config file. Tried ${pYellow(configPath)}, but have no luck. Does the file exists? 🤔`));
         return getConfig();
     }
 
@@ -18,7 +17,7 @@ export function validate(configPath = defaultConfigPath): HummockConfig {
         const content = JSON.parse(fileContent);
         return getConfig(content);
     } catch (err) {
-        logger.error(chalk.red('Unable to read config file.🙁'), err);
+        logger.error(pRed('Unable to read config file.🙁'), err);
         return getConfig();
     }
 }

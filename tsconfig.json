@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "ESNEXT",
         "noImplicitAny": true,
-        "strict": true
-    },
-    "include": ["src/**/*"]
+        "strict": true,
+        "module": "CommonJS"
+    }
 }

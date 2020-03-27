@@ -105,3 +105,6 @@ dist
 
 # app config json
 hummock.json
+
+# app cache folder
+workdir/
