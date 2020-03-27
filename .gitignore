@@ -108,3 +108,6 @@ hummock.json
 
 # app cache folder
 workdir/
+
+# app distributive
+release/
