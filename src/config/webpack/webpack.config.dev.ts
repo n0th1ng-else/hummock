@@ -9,9 +9,8 @@ export function generate(): webpack.Configuration {
 	const plugins = config.plugins || [];
 	config.mode = ApplicationMode.DEVELOPMENT;
 	config.devtool = 'cheap-module-eval-source-map';
-	config.entry = {
-		hmr: paths.modules.hmr
-	};
+	(config.entry as any).hmr = paths.modules.hmr;
+
 	config.plugins = [
 		...plugins,
 		new webpack.NamedModulesPlugin(),

@@ -1,8 +1,6 @@
 {
 	"compilerOptions": {
 		"target": "ESNEXT",
-		"noImplicitAny": true,
-		"strict": true,
 		"module": "CommonJS",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true

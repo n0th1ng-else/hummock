@@ -12,12 +12,12 @@ export class AppPaths {
 	private readonly dir = __dirname;
 
 	constructor() {
-		this.root = resolve(this.dir, '..');
+		this.root = resolve(this.dir, '../..');
 		this.release = resolve(this.root, 'release');
 		this.src = resolve(this.root, 'src');
-		this.commands = resolve(this.root, 'src', 'scripts');
+		this.commands = resolve(this.src, 'scripts');
 
-		const clientPath = resolve(this.src, 'src', 'client');
+		const clientPath = resolve(this.src, 'client');
 		this.modules = new AppPathsModules(this.root);
 		this.assets = new AppPathsAssets(clientPath);
 		this.files = new AppPathsFiles(clientPath, this.release);
