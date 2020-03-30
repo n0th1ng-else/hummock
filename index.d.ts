@@ -1,3 +1,5 @@
+declare module '*.less';
+
 declare module 'request-progress';
 
 declare module 'compression-webpack-plugin';

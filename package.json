@@ -49,6 +49,7 @@
     "html-webpack-plugin": "4.0.2",
     "less": "3.11.1",
     "less-loader": "5.0.0",
+    "nanoid": "3.0.2",
     "progress": "2.0.3",
     "raw-loader": "4.0.0",
     "reflect-metadata": "0.1.13",
