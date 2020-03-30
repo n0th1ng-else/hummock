@@ -1,13 +1,11 @@
 import { Component, NgModule, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CommandService } from '../../services/command.service';
 import { TitleService } from '../../services/title.service';
 
 @Component({
 	selector: 'h-host',
 	template: require('./host.component.html'),
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	styles: []
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HostComponent {
 	constructor(private readonly titleService: TitleService) {

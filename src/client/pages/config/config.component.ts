@@ -6,8 +6,7 @@ import { TitleService } from '../../services/title.service';
 @Component({
 	selector: 'h-config',
 	template: require('./config.component.html'),
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	styles: []
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfigComponent {
 	public readonly config = this.api.getConfig();

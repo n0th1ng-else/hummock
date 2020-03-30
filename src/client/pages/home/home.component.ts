@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, ChangeDetectionStrategy } from '@angular/core';
 import { MaterialModule } from '../../app/material.module';
 import { TitleService } from '../../services/title.service';
 import { CommandService } from '../../services/command.service';
@@ -9,6 +9,7 @@ import styles from './home.component.less';
 @Component({
 	selector: 'h-home',
 	template: require('./home.component.html'),
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	styles: [styles]
 })
 export class HomeComponent {

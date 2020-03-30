@@ -1,0 +1,11 @@
+<mat-toolbar class="topbar" color="primary">
+	<mat-toolbar-row>
+		<span class="link" (click)="openHome()">Hummock WebUI</span>
+		<span class="space"></span>
+		<a [routerLink]="['/config']">
+			<mat-icon class="action" aria-hidden="false" aria-label="Example user verified icon"
+				>account_tree</mat-icon
+			>
+		</a>
+	</mat-toolbar-row>
+</mat-toolbar>

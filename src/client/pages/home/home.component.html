@@ -1,6 +1,4 @@
 <ng-container *ngIf="{ servers: servers | async } as data">
-	<div>Home</div>
-
 	<div *ngIf="data.servers && data.servers.total; else notShow">
 		<div>
 			You have { data.servers.total, plural, =1 { 1 host } other { {{ data.servers.total }} hosts} }
