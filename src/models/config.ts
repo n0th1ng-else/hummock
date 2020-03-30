@@ -1,11 +1,13 @@
-import { defaultWiremockVersion } from '../config/index';
+import { defaultWiremockVersion, ProxyProvider } from '../config/index';
 
 export interface HummockConfigDto {
+	provider?: ProxyProvider;
 	recordFrom?: ServerForRecordDto[];
 	wiremock?: WiremockConfigDto;
 }
 
 export class HummockConfig {
+	private provider = ProxyProvider.TALKBACK;
 	private config = new WiremockConfig(defaultWiremockVersion);
 	private serversForRecord: ServerForRecord[] = [];
 
@@ -31,6 +33,13 @@ export class HummockConfig {
 			return;
 		}
 		this.config = new WiremockConfig(wiremock.version || defaultWiremockVersion);
+	}
+
+	public setProvider(provider?: ProxyProvider): void {
+		this.provider =
+			provider && provider === ProxyProvider.WIREMOCK
+				? ProxyProvider.WIREMOCK
+				: ProxyProvider.TALKBACK;
 	}
 }
 

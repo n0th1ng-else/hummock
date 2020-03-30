@@ -10,3 +10,8 @@ export const wiremockDownloadUrl =
 export const wiremockJarName = (version: string) => `wiremock-standalone-${version}.jar`;
 
 export const workDir = resolve(__dirname, '../../workdir');
+
+export enum ProxyProvider {
+	TALKBACK = 'talkback',
+	WIREMOCK = 'wiremock'
+}

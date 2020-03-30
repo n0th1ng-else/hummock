@@ -1,13 +1,28 @@
 import 'zone.js';
 import 'reflect-metadata';
-import { NgModuleRef, ApplicationRef } from '@angular/core';
+import { NgModuleRef, ApplicationRef, enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { createNewHosts } from '@angularclass/hmr';
 import { AppModule } from './app/app.module';
 
+const runtimeConfig = {
+	isProductionMode: false,
+	hmr: true
+};
+
 class AppLoader {
-	public launch(): void {
-		this.hmrBootstrap(module, this.bootstrap);
+	constructor() {
+		if (runtimeConfig.isProductionMode) {
+			enableProdMode();
+		}
+	}
+
+	public launch(): Promise<any> {
+		if (runtimeConfig.hmr) {
+			return this.hmrBootstrap(module, this.bootstrap);
+		} else {
+			return this.bootstrap();
+		}
 	}
 
 	private bootstrap(): Promise<NgModuleRef<AppModule>> {
@@ -33,15 +48,17 @@ class AppLoader {
 			return bootstrapHandler()
 				.then((appModule) => (ngModule = appModule))
 				.catch((error) => {
-					// Logger.error('Something went wrong with Module Loader', error);
+					console.error('Something went wrong with Module Loader', error);
 					throw error;
 				});
 		} else {
-			// Logger.error('[HMR] Something went wrong with Hot Module Replacement');
+			console.error('[HMR] Something went wrong with Hot Module Replacement');
 			throw new Error('[HMR] Something went wrong with Hot Module Replacement');
 		}
 	}
 }
 
 const application = new AppLoader();
-application.launch();
+application
+	.launch()
+	.catch((error) => console.error('Something went wrong with Module Loader', error));

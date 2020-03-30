@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
+import { AppRoutingModule } from '../../app/app-routing.module';
+import { HomeComponentModule } from '../../pages/home/home.component';
+import { ConfigComponentModule } from '../../pages/config/config.component';
 
 @Component({
 	selector: 'hummock-app',
@@ -6,3 +9,10 @@ import { Component } from '@angular/core';
 	styles: []
 })
 export class AppComponent {}
+
+@NgModule({
+	imports: [AppRoutingModule, HomeComponentModule, ConfigComponentModule],
+	declarations: [AppComponent],
+	exports: [AppComponent]
+})
+export class AppComponentModule {}

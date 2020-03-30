@@ -8,5 +8,5 @@ const logger = new Logger('launcher');
 export async function run() {
 	const config = validate();
 	await downloadWiremock(config.wiremock);
-	await startServer();
+	await startServer(config);
 }
