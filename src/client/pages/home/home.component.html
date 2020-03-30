@@ -1,2 +1,35 @@
-<div>Home</div>
-{{ servers | async | json }}
+<ng-container *ngIf="{ servers: servers | async } as data">
+	<div>Home</div>
+
+	<div *ngIf="data.servers && data.servers.total; else notShow">
+		<div>
+			You have { data.servers.total, plural, =1 { 1 host } other { {{ data.servers.total }} hosts} }
+			set up for recording:
+		</div>
+
+		<div>
+			<div
+				class="server-card"
+				*ngFor="let server of data.servers.items"
+				(click)="showHostDetails(server.id)"
+			>
+				<mat-card>
+					<mat-card-title> Host: {{ server.host }} </mat-card-title>
+
+					<mat-card-subtitle>
+						0 stubs
+					</mat-card-subtitle>
+				</mat-card>
+			</div>
+		</div>
+		<div>
+			<button mat-button>Click me!</button>
+		</div>
+	</div>
+
+	<ng-template #notShow>
+		<p>
+			No hosts set up to for recording. Check your config file for details
+		</p>
+	</ng-template>
+</ng-container>

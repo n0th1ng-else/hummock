@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, NgModule, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CommandService } from '../../services/command.service';
 import { TitleService } from '../../services/title.service';

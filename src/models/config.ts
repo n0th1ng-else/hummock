@@ -1,4 +1,5 @@
-import { defaultWiremockVersion, ProxyProvider } from '../config/index';
+import { nanoid } from 'nanoid';
+import { defaultWiremockVersion, ProxyProvider } from '../config';
 
 export interface HummockConfigDto {
 	provider?: ProxyProvider;
@@ -52,6 +53,7 @@ interface WiremockConfigDto {
 }
 
 class ServerForRecord {
+	public readonly id = nanoid(5);
 	constructor(public readonly host: string) {}
 }
 
