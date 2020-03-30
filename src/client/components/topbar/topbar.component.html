@@ -2,10 +2,8 @@
 	<mat-toolbar-row>
 		<span class="link" (click)="openHome()">Hummock WebUI</span>
 		<span class="space"></span>
-		<a [routerLink]="['/config']">
-			<mat-icon class="action" aria-hidden="false" aria-label="Example user verified icon"
-				>account_tree</mat-icon
-			>
-		</a>
+		<button mat-icon-button aria-label="Show hummock config" (click)="openConfig()">
+			<mat-icon>account_tree</mat-icon>
+		</button>
 	</mat-toolbar-row>
 </mat-toolbar>

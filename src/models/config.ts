@@ -54,9 +54,17 @@ interface WiremockConfigDto {
 
 class ServerForRecord {
 	public readonly id = nanoid(5);
+	public stubbs = 0;
+	public state = ServerForRecordState.IDLE;
+
 	constructor(public readonly host: string) {}
 }
 
 export class WiremockConfig {
 	constructor(public readonly version: string) {}
+}
+
+export enum ServerForRecordState {
+	IDLE = 'idle',
+	RUN = 'run'
 }

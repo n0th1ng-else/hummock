@@ -1,27 +1,32 @@
-<ng-container *ngIf="{ servers: servers | async } as data">
-	<div *ngIf="data.servers && data.servers.total; else notShow">
-		<div>
+<div class="home-page-wrapper" *ngIf="{ servers: servers | async } as data">
+	<div class="page-column" *ngIf="data.servers && data.servers.total; else notShow">
+		<h4>
 			You have { data.servers.total, plural, =1 { 1 host } other { {{ data.servers.total }} hosts} }
-			set up for recording:
-		</div>
+			set up for recording and mocking:
+		</h4>
 
 		<div>
-			<div
-				class="server-card"
-				*ngFor="let server of data.servers.items"
-				(click)="showHostDetails(server.id)"
-			>
+			<div class="server-card" *ngFor="let server of data.servers.items">
 				<mat-card>
-					<mat-card-title> Host: {{ server.host }} </mat-card-title>
-
+					<mat-card-title>
+						<mat-checkbox color="primary">Host: {{ server.host }}</mat-checkbox>
+						<button
+							mat-icon-button
+							aria-label="Show host details"
+							(click)="showHostDetails(server.id)"
+							class="details-btn"
+						>
+							<mat-icon>search</mat-icon>
+						</button>
+					</mat-card-title>
 					<mat-card-subtitle>
-						0 stubs
+						{ server.stubbs, plural, =1 { 1 stub } other { {{ server.stubbs }} stubbs} }
 					</mat-card-subtitle>
 				</mat-card>
 			</div>
 		</div>
 		<div>
-			<button mat-button>Click me!</button>
+			<button mat-raised-button color="primary" (click)="toggleRun()">Start service</button>
 		</div>
 	</div>
 
@@ -30,4 +35,4 @@
 			No hosts set up to for recording. Check your config file for details
 		</p>
 	</ng-template>
-</ng-container>
+</div>

@@ -16,6 +16,10 @@ export class TopbarComponent {
 	public openHome() {
 		this.navigation.toHome();
 	}
+
+	public openConfig() {
+		this.navigation.toConfig();
+	}
 }
 
 @NgModule({

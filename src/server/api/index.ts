@@ -1,5 +1,6 @@
 import { Application, Request, Response, NextFunction, Router } from 'express';
 import { HummockConfig } from '../../models/config';
+import { Dictionary } from '../../client/models/types';
 
 export function pickApiRoutes(app: Application, config: HummockConfig) {
 	const apiRouter = new ApiRouter(config);
@@ -24,6 +25,11 @@ class ApiRouter {
 				total: this.config.servers.length,
 				items: this.config.servers
 			});
+		});
+
+		this.router.post('/proxies', (req: Request, res: Response, next: NextFunction) => {
+			// TODO implement
+			res.status(200).send({});
 		});
 
 		this.router.all('/*', showNotFound);
