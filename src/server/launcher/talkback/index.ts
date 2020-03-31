@@ -21,6 +21,10 @@ export class TalkbackServer implements LauncherService {
 	}
 
 	public start(): Promise<void> {
+		if (this.state !== ServerForRecordState.IDLE) {
+			return Promise.resolve();
+		}
+
 		return new Promise((resolve) => {
 			this.instance.start(() => {
 				this.stateParam = ServerForRecordState.RUN;
@@ -30,6 +34,10 @@ export class TalkbackServer implements LauncherService {
 	}
 
 	public stop(): Promise<void> {
+		if (this.state !== ServerForRecordState.RUN) {
+			return Promise.resolve();
+		}
+
 		return new Promise((resolve) => {
 			this.instance.close(() => {
 				this.stateParam = ServerForRecordState.IDLE;

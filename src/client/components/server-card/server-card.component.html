@@ -1,0 +1,32 @@
+<div class="server-card" [formGroup]="form" *ngIf="server">
+	<mat-card>
+		<mat-card-title>
+			<div class="flex-between">
+				<div>
+					<mat-checkbox color="primary" [formControlName]="server.id"
+						>Host: {{ server.host }}</mat-checkbox
+					>
+				</div>
+				<div>
+					<button
+						mat-icon-button
+						aria-label="Show host details"
+						(click)="showHostDetails(server.id)"
+					>
+						<mat-icon>search</mat-icon>
+					</button>
+				</div>
+			</div>
+		</mat-card-title>
+		<mat-card-subtitle>
+			<div class="flex-between">
+				<div>
+					<span>Mocked by: {{ server.getMock() }}</span>
+				</div>
+				<div>
+					<span>{ server.stubbs, plural, =1 { 1 stubb } other { {{ server.stubbs }} stubbs} }</span>
+				</div>
+			</div>
+		</mat-card-subtitle>
+	</mat-card>
+</div>

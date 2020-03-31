@@ -30,22 +30,27 @@ class ApiRouter {
 		this.router.get('/proxies', (req: Request, res: Response, next: NextFunction) => {
 			res.status(200).send({
 				total: this.config.servers.length,
-				items: this.config.servers
+				items: this.launchers.map((launcher) => ({ state: launcher.state, ...launcher.server }))
 			});
 		});
 
 		this.router.post('/proxies', (req: Request, res: Response, next: NextFunction) => {
 			const isRunning = this.launchers.find((server) => server.state === ServerForRecordState.RUN);
-
+			logger.info(isRunning ? 'Stopping mock servers' : 'Starting mock servers');
 			Promise.all(
 				this.launchers.map((launcher) => (isRunning ? launcher.stop() : launcher.start()))
-			).then(() => {
-				logger.info(
-					pGreen('all good'),
-					this.launchers.map((launcher) => launcher.state)
-				);
-				res.status(200).send({});
-			});
+			)
+				.then(() => {
+					logger.info(
+						pGreen('all good'),
+						this.launchers.map((launcher) => launcher.state)
+					);
+					res.status(200).send({});
+				})
+				.catch((err) => {
+					logger.error(err);
+					res.status(500).send({});
+				});
 		});
 
 		this.router.all('/*', showNotFound);
