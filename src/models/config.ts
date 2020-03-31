@@ -1,5 +1,8 @@
 import { nanoid } from 'nanoid';
-import { defaultWiremockVersion, ProxyProvider } from '../config';
+import { resolve } from 'path';
+import { readdirSync, existsSync } from 'fs';
+import { defaultWiremockVersion, ProxyProvider, firstServerPort } from '../config';
+import { getFilesNumberInDir, getFilesInDir } from '../server/files';
 
 export interface HummockConfigDto {
 	provider?: ProxyProvider;
@@ -8,9 +11,12 @@ export interface HummockConfigDto {
 }
 
 export class HummockConfig {
-	private provider = ProxyProvider.TALKBACK;
+	public provider = ProxyProvider.TALKBACK;
+
 	private config = new WiremockConfig(defaultWiremockVersion);
 	private serversForRecord: ServerForRecord[] = [];
+
+	constructor(public readonly workingDirRoot: string) {}
 
 	public get wiremock(): WiremockConfig {
 		return this.config;
@@ -26,7 +32,10 @@ export class HummockConfig {
 			return;
 		}
 
-		this.serversForRecord = servers.map((server) => new ServerForRecord(server.host));
+		this.serversForRecord = servers.map(
+			(server, portOffset) =>
+				new ServerForRecord(server.host, firstServerPort + portOffset, this.workingDirRoot)
+		);
 	}
 
 	public setWiremockConfig(wiremock?: WiremockConfigDto): void {
@@ -52,19 +61,33 @@ interface WiremockConfigDto {
 	version?: string;
 }
 
-class ServerForRecord {
+export class ServerForRecord {
 	public readonly id = nanoid(5);
+	public readonly workDir: string;
 	public stubbs = 0;
-	public state = ServerForRecordState.IDLE;
 
-	constructor(public readonly host: string) {}
+	constructor(public readonly host: string, public readonly port: number, workingDirRoot: string) {
+		const hostEscaped = host
+			.replace(/\./g, '')
+			.replace(/\/\//g, '')
+			.replace(/\:/g, '')
+			.replace(/\:/g, '')
+			.replace(/\#/g, '')
+			.replace(/\?/g, '')
+			.replace(/\//g, '');
+		this.workDir = resolve(workingDirRoot, hostEscaped);
+		this.updateStubbCount();
+	}
+
+	public updateStubbCount(): void {
+		this.stubbs = getFilesNumberInDir(this.workDir);
+	}
+
+	public getStubbData(): any[] {
+		return getFilesInDir(this.workDir);
+	}
 }
 
 export class WiremockConfig {
 	constructor(public readonly version: string) {}
-}
-
-export enum ServerForRecordState {
-	IDLE = 'idle',
-	RUN = 'run'
 }

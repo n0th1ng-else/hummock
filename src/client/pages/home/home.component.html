@@ -1,32 +1,34 @@
-<div class="home-page-wrapper" *ngIf="{ servers: servers | async } as data">
-	<div class="page-column" *ngIf="data.servers && data.servers.total; else notShow">
+<div class="home-page-wrapper">
+	<div class="page-column" *ngIf="servers && servers.total; else notShow">
 		<h4>
-			You have { data.servers.total, plural, =1 { 1 host } other { {{ data.servers.total }} hosts} }
-			set up for recording and mocking:
+			You have { servers.total, plural, =1 { 1 host } other { {{ servers.total }} hosts} } set up
+			for recording and mocking:
 		</h4>
 
 		<div>
-			<div class="server-card" *ngFor="let server of data.servers.items">
-				<mat-card>
-					<mat-card-title>
-						<mat-checkbox color="primary">Host: {{ server.host }}</mat-checkbox>
-						<button
-							mat-icon-button
-							aria-label="Show host details"
-							(click)="showHostDetails(server.id)"
-							class="details-btn"
-						>
-							<mat-icon>search</mat-icon>
-						</button>
-					</mat-card-title>
-					<mat-card-subtitle>
-						{ server.stubbs, plural, =1 { 1 stub } other { {{ server.stubbs }} stubbs} }
-					</mat-card-subtitle>
-				</mat-card>
-			</div>
+			<h-server-card
+				*ngFor="let server of servers.items"
+				[server]="server"
+				[form]="serversForm"
+			></h-server-card>
 		</div>
 		<div>
-			<button mat-raised-button color="primary" (click)="toggleRun()">Start service</button>
+			<button
+				mat-raised-button
+				color="primary"
+				[matBadge]="selectedHosts"
+				[matBadgeHidden]="!selectedHosts"
+				matBadgeColor="warn"
+				(click)="toggleRun()"
+			>
+				<ng-container *ngIf="selectedAll">
+					{allLaunched, select, stop {Stop} other {Start}} all services
+				</ng-container>
+				<ng-container *ngIf="!selectedAll">
+					{allLaunched, select, stop {Stop} other {Start}} { selectedHosts, plural, =1 { 1 service }
+					other { {{ selectedHosts }} services} }
+				</ng-container>
+			</button>
 		</div>
 	</div>
 

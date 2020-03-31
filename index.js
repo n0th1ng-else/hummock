@@ -6,8 +6,8 @@ try {
 }
 
 const { Logger } = require('./src/server/log.ts');
-const log = new Logger();
-log.info('[ts-node] Typescript compiler is registered 🚀');
+const log = new Logger('ts-node');
+log.info('Typescript compiler is registered 🚀');
 
 const { run } = require('./src/scripts/start.ts');
 run();

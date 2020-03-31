@@ -13,6 +13,7 @@ const logger = new Logger('express');
 export async function startServer(config: HummockConfig, port = 3000): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const app: express.Application = express();
+		app.use(express.json());
 
 		// TODO implement production mode
 		const compiler = webpack(getConfig(false));

@@ -1,11 +1,11 @@
 import { existsSync, readFileSync } from 'fs';
-import { defaultConfigPath } from '../config/index';
+import { defaultConfigPath, workDir } from '../config';
 import { Logger, pRed, pYellow } from '../server/log';
 import { HummockConfig, HummockConfigDto } from '../models/config';
 
 const logger = new Logger('config');
 
-export function validate(configPath = defaultConfigPath): HummockConfig {
+export function validate(configPath = defaultConfigPath, workingDir = workDir): HummockConfig {
 	if (!existsSync(configPath)) {
 		logger.error(
 			pRed(
@@ -14,24 +14,25 @@ export function validate(configPath = defaultConfigPath): HummockConfig {
 				)}, but have no luck. Does the file exists? 🤔`
 			)
 		);
-		return getConfig();
+		return getConfig(workingDir);
 	}
 
 	const fileContent = readFileSync(configPath, { encoding: 'UTF8' });
 
 	try {
 		const content = JSON.parse(fileContent);
-		return getConfig(content);
+		return getConfig(workingDir, content);
 	} catch (err) {
 		logger.error(pRed('Unable to read config file.🙁'), err);
-		return getConfig();
+		return getConfig(workingDir);
 	}
 }
 
-function getConfig(dto?: HummockConfigDto): HummockConfig {
-	const config = new HummockConfig();
+function getConfig(workingDir: string, dto?: HummockConfigDto): HummockConfig {
+	const config = new HummockConfig(workingDir);
 
 	if (dto) {
+		config.setProvider(dto.provider);
 		config.setServers(dto.recordFrom);
 		config.setWiremockConfig(dto.wiremock);
 	}

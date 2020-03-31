@@ -1,10 +1,11 @@
-import { ServerForRecordState } from '../../models/config';
+import { ServerForRecordState } from '../../config';
 
 export interface ServersDto extends ListDto<ServerDto> {}
 
 export interface ServerDto {
 	id: string;
 	host: string;
+	port: number;
 	stubbs: number;
 	state: ServerForRecordState;
 }
