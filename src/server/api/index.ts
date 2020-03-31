@@ -2,6 +2,7 @@ import { Application, Request, Response, NextFunction, Router } from 'express';
 import { HummockConfig } from '../../models/config';
 import { Logger, pGreen } from '../log';
 import { ServerForRecordState } from '../../config';
+import { getLaunchers, LauncherService } from '../launcher';
 
 const logger = new Logger('api');
 
@@ -14,7 +15,10 @@ export function pickApiRoutes(app: Application, config: HummockConfig) {
 class ApiRouter {
 	public readonly router = Router();
 
+	private readonly launchers: LauncherService[];
+
 	constructor(private readonly config: HummockConfig) {
+		this.launchers = getLaunchers(config);
 		this.handleRoutes();
 	}
 
@@ -31,16 +35,14 @@ class ApiRouter {
 		});
 
 		this.router.post('/proxies', (req: Request, res: Response, next: NextFunction) => {
-			const isRunning = this.config.servers.find(
-				(server) => server.state === ServerForRecordState.RUN
-			);
+			const isRunning = this.launchers.find((server) => server.state === ServerForRecordState.RUN);
 
 			Promise.all(
-				this.config.servers.map((server) => (isRunning ? server.stop() : server.start()))
+				this.launchers.map((launcher) => (isRunning ? launcher.stop() : launcher.start()))
 			).then(() => {
 				logger.info(
 					pGreen('all good'),
-					this.config.servers.map((server) => server.state)
+					this.launchers.map((launcher) => launcher.state)
 				);
 				res.status(200).send({});
 			});

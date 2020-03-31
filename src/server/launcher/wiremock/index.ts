@@ -1,9 +1,10 @@
 import { existsSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
 import { Logger, pGreen, pRed } from '../../log';
-import { WiremockConfig } from '../../../models/config';
-import { wiremockDownloadUrl, wiremockJarName } from '../../../config';
+import { WiremockConfig, ServerForRecord } from '../../../models/config';
+import { wiremockDownloadUrl, wiremockJarName, ServerForRecordState } from '../../../config';
 import { downloadFile } from '../../downloader';
+import { LauncherService } from '..';
 
 const logger = new Logger('wiremock');
 
@@ -22,5 +23,23 @@ export async function downloadWiremock(config: WiremockConfig, workDir: string):
 	} catch (err) {
 		logger.error(pRed('Unable to download Wiremock 👎'));
 		throw err;
+	}
+}
+
+export class WiremockServer implements LauncherService {
+	private stateParam = ServerForRecordState.IDLE;
+
+	public get state(): ServerForRecordState {
+		return this.stateParam;
+	}
+
+	constructor(public readonly server: ServerForRecord) {}
+
+	public start(): Promise<void> {
+		throw new Error('Method not implemented.');
+	}
+
+	public stop(): Promise<void> {
+		throw new Error('Method not implemented.');
 	}
 }

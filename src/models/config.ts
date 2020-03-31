@@ -1,13 +1,7 @@
-import talkback from 'talkback/es6';
 import { nanoid } from 'nanoid';
 import { resolve } from 'path';
 import { readdirSync } from 'fs';
-import {
-	defaultWiremockVersion,
-	ProxyProvider,
-	firstServerPort,
-	ServerForRecordState
-} from '../config';
+import { defaultWiremockVersion, ProxyProvider, firstServerPort } from '../config';
 
 export interface HummockConfigDto {
 	provider?: ProxyProvider;
@@ -39,12 +33,7 @@ export class HummockConfig {
 
 		this.serversForRecord = servers.map(
 			(server, portOffset) =>
-				new ServerForRecord(
-					server.host,
-					firstServerPort + portOffset,
-					this.workingDirRoot,
-					this.provider
-				)
+				new ServerForRecord(server.host, firstServerPort + portOffset, this.workingDirRoot)
 		);
 	}
 
@@ -71,19 +60,12 @@ interface WiremockConfigDto {
 	version?: string;
 }
 
-class ServerForRecord {
+export class ServerForRecord {
 	public readonly id = nanoid(5);
 	public readonly workDir: string;
 	public stubbs = 0;
-	public state = ServerForRecordState.IDLE;
-	public readonly server?;
 
-	constructor(
-		public readonly host: string,
-		public readonly port: number,
-		workingDirRoot: string,
-		provider: ProxyProvider
-	) {
+	constructor(public readonly host: string, public readonly port: number, workingDirRoot: string) {
 		const hostEscaped = host
 			.replace(/\./g, '')
 			.replace(/\/\//g, '')
@@ -94,44 +76,10 @@ class ServerForRecord {
 			.replace(/\//g, '');
 		this.workDir = resolve(workingDirRoot, hostEscaped);
 		this.updateStubbCount();
-		if (provider === ProxyProvider.TALKBACK) {
-			this.server = talkback({
-				host: this.host,
-				record: talkback.Options.RecordMode.NEW,
-				port: this.port,
-				path: this.workDir
-			});
-		}
 	}
 
 	public updateStubbCount(): void {
 		this.stubbs = getFilesNumberInDir(this.workDir);
-	}
-
-	public start(): Promise<void> {
-		if (!this.server) {
-			return Promise.resolve();
-		}
-
-		return new Promise((resolve) => {
-			this.server.start(() => {
-				this.state = ServerForRecordState.RUN;
-				resolve();
-			});
-		});
-	}
-
-	public stop(): Promise<void> {
-		if (!this.server) {
-			return Promise.resolve();
-		}
-
-		return new Promise((resolve) => {
-			this.server.close(() => {
-				this.state = ServerForRecordState.IDLE;
-				resolve();
-			});
-		}).then(() => this.updateStubbCount());
 	}
 }
 
