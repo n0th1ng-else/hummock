@@ -42,4 +42,12 @@ export class WiremockServer implements LauncherService {
 	public stop(): Promise<void> {
 		throw new Error('Method not implemented.');
 	}
+
+	public getDto(): any {
+		throw new Error('Method not implemented.');
+	}
+
+	public getListDto(): any {
+		throw new Error('Method not implemented.');
+	}
 }

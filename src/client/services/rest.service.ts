@@ -17,6 +17,10 @@ export class RestService {
 		return this.http.get<ServersDto>(this.getPath('proxies'));
 	}
 
+	public getProxy(id: string): Observable<{}> {
+		return this.http.get<{}>(this.getPath(['proxies', id]));
+	}
+
 	public toggleService(state: Dictionary<boolean>): Observable<void> {
 		return this.http.post<void>(this.getPath('proxies'), state);
 	}

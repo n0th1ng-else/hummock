@@ -16,6 +16,7 @@ import styles from './home.component.less';
 import { Dictionary } from '../../models/types';
 import { ServerCardComponentModule } from '../../components/server-card/server-card.component';
 import { ServersMeta } from '../../models/server';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
 	selector: 'h-home',
@@ -35,8 +36,9 @@ export class HomeComponent implements OnDestroy {
 	constructor(
 		private readonly titleService: TitleService,
 		private readonly fb: FormBuilder,
+		private readonly cdr: ChangeDetectorRef,
 		private readonly api: CommandService,
-		private readonly cdr: ChangeDetectorRef
+		private readonly notification: NotificationService
 	) {
 		this.titleService.setTitle('Home');
 		this.getData((servers) => this.createForm(servers));
@@ -60,7 +62,9 @@ export class HomeComponent implements OnDestroy {
 
 			const formValues: Dictionary<boolean> = this.serversForm.value;
 			Object.keys(formValues).forEach((key) => (formValues[key] = false));
+			this.allLaunched = this.detectIfAllSelectedServicesLaunched(formValues, this.servers);
 			this.serversForm.patchValue(formValues);
+			this.notification.showMessage('Action triggered 🚀');
 		});
 	}
 

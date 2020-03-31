@@ -19,4 +19,6 @@ export interface LauncherService {
 	readonly state: ServerForRecordState;
 	start(): Promise<void>;
 	stop(): Promise<void>;
+	getListDto(): any;
+	getDto(): any;
 }

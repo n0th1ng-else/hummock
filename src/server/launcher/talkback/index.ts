@@ -5,19 +5,14 @@ import { ServerForRecordState } from '../../../config';
 
 export class TalkbackServer implements LauncherService {
 	private stateParam = ServerForRecordState.IDLE;
-	private readonly instance;
+	private instance;
 
 	public get state(): ServerForRecordState {
 		return this.stateParam;
 	}
 
 	constructor(public readonly server: ServerForRecord) {
-		this.instance = talkback({
-			host: server.host,
-			record: talkback.Options.RecordMode.NEW,
-			port: server.port,
-			path: server.workDir
-		});
+		this.setupMock();
 	}
 
 	public start(): Promise<void> {
@@ -44,7 +39,38 @@ export class TalkbackServer implements LauncherService {
 				resolve();
 			});
 		}).then(() => {
+			this.setupMock();
 			this.server.updateStubbCount();
+		});
+	}
+
+	public getDto(): any {
+		return {
+			stubbsData: [],
+			state: this.state,
+			id: this.server.id,
+			host: this.server.host,
+			port: this.server.port,
+			stubbs: this.server.stubbs
+		};
+	}
+
+	public getListDto(): any {
+		return {
+			state: this.state,
+			id: this.server.id,
+			host: this.server.host,
+			port: this.server.port,
+			stubbs: this.server.stubbs
+		};
+	}
+
+	private setupMock() {
+		this.instance = talkback({
+			host: this.server.host,
+			record: talkback.Options.RecordMode.NEW,
+			port: this.server.port,
+			path: this.server.workDir
 		});
 	}
 }

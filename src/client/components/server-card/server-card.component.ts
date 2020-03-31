@@ -1,10 +1,11 @@
 import { Component, NgModule, ChangeDetectionStrategy, Input } from '@angular/core';
-import { MaterialModule } from '../../app/material.module';
-import styles from './server-card.component.less';
-import { ServerModel } from '../../models/server';
-import { NavigationService } from '../../services/navigation.service';
 import { ReactiveFormsModule, FormsModule, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { MaterialModule } from '../../app/material.module';
+import { ServerModel } from '../../models/server';
+import { NavigationService } from '../../services/navigation.service';
+import { NotificationService } from '../../services/notification.service';
+import styles from './server-card.component.less';
 
 @Component({
 	selector: 'h-server-card',
@@ -16,7 +17,10 @@ export class ServerCardComponent {
 	@Input() public server: ServerModel;
 	@Input() public form: FormGroup;
 
-	constructor(private readonly navigation: NavigationService) {}
+	constructor(
+		private readonly navigation: NavigationService,
+		private readonly notification: NotificationService
+	) {}
 
 	public showHostDetails(hostId: string): void {
 		this.navigation.toHostDetails(hostId);
@@ -27,8 +31,18 @@ export class ServerCardComponent {
 	}
 
 	public copyMockName(): void {
-		const mock = this.getMockName();
-		console.log(mock);
+		const hostName = this.getMockName();
+		const clipboardElement = document.createElement('textarea');
+		clipboardElement.value = hostName;
+		clipboardElement.setAttribute('readonly', '');
+		clipboardElement.style.position = 'absolute';
+		clipboardElement.style.left = '-9999px';
+		clipboardElement.style.display = 'none;';
+		document.body.appendChild(clipboardElement);
+		clipboardElement.select();
+		document.execCommand('copy');
+		document.body.removeChild(clipboardElement);
+		this.notification.showMessage('Copied to clipboard 🍕');
 	}
 
 	public getMockName(): string {

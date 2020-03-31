@@ -30,11 +30,25 @@ class ApiRouter {
 		this.router.get('/proxies', (req: Request, res: Response, next: NextFunction) => {
 			res.status(200).send({
 				total: this.config.servers.length,
-				items: this.launchers.map((launcher) => ({ state: launcher.state, ...launcher.server }))
+				items: this.launchers.map((launcher) => launcher.getListDto())
 			});
 		});
 
+		this.router.get('/proxies/:proxyId', (req: Request, res: Response, next: NextFunction) => {
+			const id = req.params.proxyId;
+			const launcher = this.launchers.find((instance) => instance.server.id === id);
+
+			if (!launcher) {
+				res.status(404).send({ message: `Host with id=${id} not found` });
+				return;
+			}
+
+			res.status(200).send(launcher.getDto());
+		});
+
 		this.router.post('/proxies', (req: Request, res: Response, next: NextFunction) => {
+			logger.info(req.body); // TODO implement selection
+
 			const isRunning = this.launchers.find((server) => server.state === ServerForRecordState.RUN);
 			logger.info(isRunning ? 'Stopping mock servers' : 'Starting mock servers');
 			Promise.all(
