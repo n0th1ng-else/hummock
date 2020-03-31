@@ -1,26 +1,31 @@
-<div class="home-page-wrapper" *ngIf="{ servers: servers | async } as data">
+<div class="home-page-wrapper" *ngIf="{ servers: servers$ | async } as data">
 	<div class="page-column" *ngIf="data.servers && data.servers.total; else notShow">
 		<h4>
 			You have { data.servers.total, plural, =1 { 1 host } other { {{ data.servers.total }} hosts} }
 			set up for recording and mocking:
 		</h4>
 
-		<div>
+		<div [formGroup]="serversForm">
 			<div class="server-card" *ngFor="let server of data.servers.items">
 				<mat-card>
 					<mat-card-title>
-						<mat-checkbox color="primary">Host: {{ server.host }}</mat-checkbox>
+						<mat-checkbox color="primary" [formControlName]="server.id"
+							>Host: {{ server.host }}</mat-checkbox
+						>
 						<button
 							mat-icon-button
 							aria-label="Show host details"
 							(click)="showHostDetails(server.id)"
-							class="details-btn"
+							class="spaced"
 						>
 							<mat-icon>search</mat-icon>
 						</button>
 					</mat-card-title>
 					<mat-card-subtitle>
-						{ server.stubbs, plural, =1 { 1 stub } other { {{ server.stubbs }} stubbs} }
+						<span>Mocked by: {{ server.getMock() }}</span>
+						<span class="spaced"
+							>{ server.stubbs, plural, =1 { 1 stub } other { {{ server.stubbs }} stubbs} }</span
+						>
 					</mat-card-subtitle>
 				</mat-card>
 			</div>

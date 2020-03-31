@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, NgModule, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { MaterialModule } from '../../app/material.module';
 import { TitleService } from '../../services/title.service';
 import { CommandService } from '../../services/command.service';
@@ -16,8 +17,9 @@ import { Dictionary } from '../../models/types';
 	styles: [styles]
 })
 export class HomeComponent implements OnDestroy {
-	public readonly servers = this.api.getProxies();
+	public readonly servers$ = this.api.getProxies();
 	public serversForm: FormGroup;
+	public selectedHosts = 0;
 
 	private readonly subscription: Subscription;
 
@@ -28,15 +30,28 @@ export class HomeComponent implements OnDestroy {
 		private readonly navigation: NavigationService
 	) {
 		this.titleService.setTitle('Home');
-		this.serversForm = this.fb.group({});
 
-		this.subscription = this.servers.subscribe((servers) => {
-			const group = servers.items.reduce<Dictionary<false>>((res, item) => {
-				res[item.id] = false;
-				return res;
-			}, {});
-			this.serversForm = this.fb.group(group);
-		});
+		this.subscription = this.servers$
+			.pipe(
+				switchMap((servers) => {
+					const group = servers.items.reduce<Dictionary<false>>((res, item) => {
+						res[item.id] = false;
+						return res;
+					}, {});
+					this.serversForm = this.fb.group(group);
+
+					return this.serversForm.valueChanges;
+				}),
+				map((data) => {
+					return Object.keys(data).reduce((res, key) => {
+						res = data[key] ? res + 1 : res;
+						return res;
+					}, 0);
+				})
+			)
+			.subscribe((data) => {
+				// TODO handle selectedRows
+			});
 	}
 
 	public ngOnDestroy(): void {

@@ -1,13 +1,13 @@
 import { existsSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
-import { workDir, wiremockDownloadUrl, wiremockJarName } from '../../config/index';
+import { wiremockDownloadUrl, wiremockJarName } from '../../config';
 import { Logger, pGreen, pRed } from '../log';
 import { WiremockConfig } from '../../models/config';
 import { downloadFile } from '../downloader';
 
 const logger = new Logger('wiremock');
 
-export async function downloadWiremock(config: WiremockConfig): Promise<void> {
+export async function downloadWiremock(config: WiremockConfig, workDir: string): Promise<void> {
 	if (!existsSync(workDir)) {
 		logger.info(pGreen('Working dir does not exists. Creating it...'));
 		mkdirSync(workDir);
