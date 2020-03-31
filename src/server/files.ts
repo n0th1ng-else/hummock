@@ -1,8 +1,6 @@
+import * as json5 from 'json5';
 import { resolve } from 'path';
 import { existsSync, readdirSync, readFileSync } from 'fs';
-import { Logger } from './log';
-
-const logger = new Logger('files');
 
 export function getFilesNumberInDir(dir: string): number {
 	if (!existsSync(dir)) {
@@ -19,6 +17,11 @@ export function getFilesInDir(dir: string) {
 	}
 
 	const files = readdirSync(dir);
-	logger.info(files); // TODO implement
-	return [];
+	return files.map(file => {
+		const content = readFileSync(resolve(dir, file), 'utf8');
+		return {
+			name: file,
+			content: json5.parse(content)
+		};
+	});
 }

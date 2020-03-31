@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTreeModule } from '@angular/material/tree';
 
 require('@angular/material/prebuilt-themes/deeppurple-amber.css');
 
@@ -17,7 +18,8 @@ require('@angular/material/prebuilt-themes/deeppurple-amber.css');
 		MatIconModule,
 		MatCheckboxModule,
 		MatBadgeModule,
-		MatSnackBarModule
+		MatSnackBarModule,
+		MatTreeModule
 	]
 })
 export class MaterialModule {}
