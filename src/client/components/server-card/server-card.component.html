@@ -20,8 +20,24 @@
 		</mat-card-title>
 		<mat-card-subtitle>
 			<div class="flex-between">
-				<div>
-					<span>Mocked by: {{ server.getMock() }}</span>
+				<div class="status">
+					<mat-icon
+						title="Server is not launched"
+						aria-hidden="false"
+						aria-label="Server is not launched"
+						class="state yellow"
+						*ngIf="!isLaunched()"
+						>pause_circle_filled</mat-icon
+					>
+					<mat-icon
+						title="Server is launched"
+						aria-hidden="false"
+						aria-label="Server is launched"
+						class="state green"
+						*ngIf="isLaunched()"
+						>play_circle_filled</mat-icon
+					>
+					<span class="clickable" (click)="copyMockName()">Mocked by: {{ getMockName() }}</span>
 				</div>
 				<div>
 					<span>{ server.stubbs, plural, =1 { 1 stubb } other { {{ server.stubbs }} stubbs} }</span>

@@ -51,17 +51,17 @@ export class HomeComponent implements OnDestroy {
 
 	public toggleRun(): void {
 		const selectionState: Dictionary<boolean> = this.serversForm.value;
-		// this.api.toggleService(selectionState).subscribe(() => {
-		this.getData();
+		this.api.toggleService(selectionState).subscribe(() => {
+			this.getData();
 
-		if (!this.serversForm) {
-			return;
-		}
+			if (!this.serversForm) {
+				return;
+			}
 
-		const formValues: Dictionary<boolean> = this.serversForm.value;
-		Object.keys(formValues).forEach((key) => (formValues[key] = false));
-		this.serversForm.patchValue(formValues);
-		// });
+			const formValues: Dictionary<boolean> = this.serversForm.value;
+			Object.keys(formValues).forEach((key) => (formValues[key] = false));
+			this.serversForm.patchValue(formValues);
+		});
 	}
 
 	private createForm(servers: ServersMeta): void {

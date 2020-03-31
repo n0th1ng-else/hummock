@@ -21,6 +21,19 @@ export class ServerCardComponent {
 	public showHostDetails(hostId: string): void {
 		this.navigation.toHostDetails(hostId);
 	}
+
+	public isLaunched(): boolean {
+		return this.server.isLaunched();
+	}
+
+	public copyMockName(): void {
+		const mock = this.getMockName();
+		console.log(mock);
+	}
+
+	public getMockName(): string {
+		return this.server.getMock();
+	}
 }
 
 @NgModule({
