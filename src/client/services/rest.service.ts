@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ServersDto, Dictionary } from '../models/types';
+import { ServersDto } from '../models/types';
+import { ServerToggleDto } from '../../models/types';
 
 @Injectable({ providedIn: 'root' })
 export class RestService {
@@ -21,7 +22,7 @@ export class RestService {
 		return this.http.get<{}>(this.getPath(['proxies', id]));
 	}
 
-	public toggleService(state: Dictionary<boolean>): Observable<void> {
+	public toggleService(state: ServerToggleDto): Observable<void> {
 		return this.http.post<void>(this.getPath('proxies'), state);
 	}
 

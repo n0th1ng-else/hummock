@@ -1,8 +1,9 @@
 import { Application, Request, Response, NextFunction, Router } from 'express';
 import { HummockConfig } from '../../models/config';
-import { Logger, pGreen } from '../log';
+import { Logger, pGreen, pYellow } from '../log';
 import { ServerForRecordState } from '../../config';
 import { getLaunchers, LauncherService } from '../launcher';
+import { ServerToggleDto } from '../../models/types';
 
 const logger = new Logger('api');
 
@@ -30,13 +31,13 @@ class ApiRouter {
 		this.router.get('/proxies', (req: Request, res: Response, next: NextFunction) => {
 			res.status(200).send({
 				total: this.config.servers.length,
-				items: this.launchers.map((launcher) => launcher.getListDto())
+				items: this.launchers.map(launcher => launcher.getListDto())
 			});
 		});
 
 		this.router.get('/proxies/:proxyId', (req: Request, res: Response, next: NextFunction) => {
 			const id = req.params.proxyId;
-			const launcher = this.launchers.find((instance) => instance.server.id === id);
+			const launcher = this.launchers.find(instance => instance.server.id === id);
 
 			if (!launcher) {
 				res.status(404).send({ message: `Host with id=${id} not found` });
@@ -47,21 +48,27 @@ class ApiRouter {
 		});
 
 		this.router.post('/proxies', (req: Request, res: Response, next: NextFunction) => {
-			logger.info(req.body); // TODO implement selection
+			const toggleData: ServerToggleDto = req.body;
 
-			const isRunning = this.launchers.find((server) => server.state === ServerForRecordState.RUN);
-			logger.info(isRunning ? 'Stopping mock servers' : 'Starting mock servers');
+			logger.info(!toggleData.run ? 'Stopping mock servers' : 'Starting mock servers');
+
 			Promise.all(
-				this.launchers.map((launcher) => (isRunning ? launcher.stop() : launcher.start()))
+				toggleData.ids.map(id => {
+					const launcher = this.launchers.find(item => item.server.id === id);
+					if (!launcher) {
+						logger.warn(pYellow(`Unable to toggle launcher with id=${id}`));
+					}
+					return toggleData.run ? launcher.start() : launcher.stop();
+				})
 			)
 				.then(() => {
 					logger.info(
 						pGreen('all good'),
-						this.launchers.map((launcher) => launcher.state)
+						this.launchers.map(launcher => launcher.state)
 					);
 					res.status(200).send({});
 				})
-				.catch((err) => {
+				.catch(err => {
 					logger.error(err);
 					res.status(500).send({});
 				});

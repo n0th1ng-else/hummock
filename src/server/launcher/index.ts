@@ -6,9 +6,9 @@ import { WiremockServer } from './wiremock';
 export function getLaunchers(config: HummockConfig): LauncherService[] {
 	switch (config.provider) {
 		case ProxyProvider.TALKBACK:
-			return config.servers.map((server) => new TalkbackServer(server));
+			return config.servers.map(server => new TalkbackServer(server));
 		case ProxyProvider.WIREMOCK:
-			return config.servers.map((server) => new WiremockServer(server));
+			return config.servers.map(server => new WiremockServer(server));
 		default:
 			return [];
 	}

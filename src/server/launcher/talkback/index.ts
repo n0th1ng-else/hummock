@@ -20,7 +20,7 @@ export class TalkbackServer implements LauncherService {
 			return Promise.resolve();
 		}
 
-		return new Promise((resolve) => {
+		return new Promise(resolve => {
 			this.instance.start(() => {
 				this.stateParam = ServerForRecordState.RUN;
 				resolve();
@@ -33,7 +33,7 @@ export class TalkbackServer implements LauncherService {
 			return Promise.resolve();
 		}
 
-		return new Promise((resolve) => {
+		return new Promise(resolve => {
 			this.instance.close(() => {
 				this.stateParam = ServerForRecordState.IDLE;
 				resolve();
@@ -46,7 +46,7 @@ export class TalkbackServer implements LauncherService {
 
 	public getDto(): any {
 		return {
-			stubbsData: [],
+			stubbsData: this.server.getStubbData(),
 			state: this.state,
 			id: this.server.id,
 			host: this.server.host,

@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
 import { MaterialModule } from '../../app/material.module';
 import { TitleService } from '../../services/title.service';
 import { CommandService } from '../../services/command.service';
@@ -17,6 +16,7 @@ import { Dictionary } from '../../models/types';
 import { ServerCardComponentModule } from '../../components/server-card/server-card.component';
 import { ServersMeta } from '../../models/server';
 import { NotificationService } from '../../services/notification.service';
+import { startWith } from 'rxjs/operators';
 
 @Component({
 	selector: 'h-home',
@@ -41,7 +41,7 @@ export class HomeComponent implements OnDestroy {
 		private readonly notification: NotificationService
 	) {
 		this.titleService.setTitle('Home');
-		this.getData((servers) => this.createForm(servers));
+		this.getData(() => this.createForm());
 	}
 
 	public ngOnDestroy(): void {
@@ -53,7 +53,18 @@ export class HomeComponent implements OnDestroy {
 
 	public toggleRun(): void {
 		const selectionState: Dictionary<boolean> = this.serversForm.value;
-		this.api.toggleService(selectionState).subscribe(() => {
+		const allRows = this.selectedAllRows(selectionState);
+		const filteredIds = allRows
+			? Object.keys(selectionState)
+			: Object.keys(selectionState).filter(key => selectionState[key]);
+		const state = {
+			run: !!this.servers.items
+				.filter(server => filteredIds.includes(server.id))
+				.find(server => !server.isLaunched()),
+			ids: filteredIds
+		};
+
+		this.api.toggleService(state).subscribe(() => {
 			this.getData();
 
 			if (!this.serversForm) {
@@ -61,20 +72,20 @@ export class HomeComponent implements OnDestroy {
 			}
 
 			const formValues: Dictionary<boolean> = this.serversForm.value;
-			Object.keys(formValues).forEach((key) => (formValues[key] = false));
+			Object.keys(formValues).forEach(key => (formValues[key] = false));
 			this.allLaunched = this.detectIfAllSelectedServicesLaunched(formValues, this.servers);
 			this.serversForm.patchValue(formValues);
 			this.notification.showMessage('Action triggered 🚀');
 		});
 	}
 
-	private createForm(servers: ServersMeta): void {
-		const group = servers.items.reduce<Dictionary<false>>((res, item) => {
+	private createForm(): void {
+		const group = this.servers.items.reduce<Dictionary<false>>((res, item) => {
 			res[item.id] = false;
 			return res;
 		}, {});
 		this.serversForm = this.fb.group(group);
-		this.serversForm.valueChanges.subscribe((form: Dictionary<boolean>) => {
+		this.serversForm.valueChanges.pipe(startWith(group)).subscribe((form: Dictionary<boolean>) => {
 			const selectedCount = Object.keys(form).reduce((res, key) => {
 				res = form[key] ? res + 1 : res;
 				return res;
@@ -83,16 +94,16 @@ export class HomeComponent implements OnDestroy {
 
 			this.selectedAll = allCount === selectedCount || !selectedCount;
 			this.selectedHosts = selectedCount;
-			this.allLaunched = this.detectIfAllSelectedServicesLaunched(form, servers);
+			this.allLaunched = this.detectIfAllSelectedServicesLaunched(form, this.servers);
 			this.cdr.markForCheck();
 		});
 	}
 
-	private getData(onData?: (servers: ServersMeta) => void): void {
-		this.api.getProxies().subscribe((servers) => {
+	private getData(onData?: () => void): void {
+		this.api.getProxies().subscribe(servers => {
 			this.servers = servers;
 			if (onData) {
-				onData(servers);
+				onData();
 			}
 			this.cdr.markForCheck();
 		});
@@ -103,14 +114,22 @@ export class HomeComponent implements OnDestroy {
 		servers: ServersMeta
 	): string {
 		const hasSelected = Object.keys(form).reduce((res, key) => res || form[key], false);
+
 		const allSelected =
 			Object.keys(form).reduce((res, key) => res && form[key], true) || !hasSelected;
-		const ids = allSelected ? Object.keys(form) : Object.keys(form).filter((id) => form[id]);
-		const allStopped = ids.find((id) => {
-			const server = servers.items.find((item) => item.id === id);
+		const ids = allSelected ? Object.keys(form) : Object.keys(form).filter(id => form[id]);
+		const allStopped = ids.find(id => {
+			const server = servers.items.find(item => item.id === id);
 			return server && !server.isLaunched();
 		});
+
 		return allStopped ? 'start' : 'stop';
+	}
+
+	private selectedAllRows(form: Dictionary<boolean>): boolean {
+		const selected = Object.keys(form).filter(key => form[key]).length;
+		const allRows = Object.keys(form).length;
+		return !selected || selected === allRows;
 	}
 }
 

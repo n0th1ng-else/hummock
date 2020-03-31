@@ -1,7 +1,8 @@
 import { nanoid } from 'nanoid';
 import { resolve } from 'path';
-import { readdirSync } from 'fs';
+import { readdirSync, existsSync } from 'fs';
 import { defaultWiremockVersion, ProxyProvider, firstServerPort } from '../config';
+import { getFilesNumberInDir, getFilesInDir } from '../server/files';
 
 export interface HummockConfigDto {
 	provider?: ProxyProvider;
@@ -81,13 +82,12 @@ export class ServerForRecord {
 	public updateStubbCount(): void {
 		this.stubbs = getFilesNumberInDir(this.workDir);
 	}
+
+	public getStubbData(): any[] {
+		return getFilesInDir(this.workDir);
+	}
 }
 
 export class WiremockConfig {
 	constructor(public readonly version: string) {}
-}
-
-function getFilesNumberInDir(dir: string): number {
-	const files = readdirSync(dir);
-	return files.length;
 }

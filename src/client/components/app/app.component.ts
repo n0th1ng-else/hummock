@@ -4,11 +4,13 @@ import { HomeComponentModule } from '../../pages/home/home.component';
 import { ConfigComponentModule } from '../../pages/config/config.component';
 import { HostComponentModule } from '../../pages/host/host.component';
 import { TopbarComponentModule } from '../topbar/topbar.component';
+import styles from './app.component.less';
 
 @Component({
 	selector: 'hummock-app',
 	template: require('./app.component.html'),
-	changeDetection: ChangeDetectionStrategy.OnPush
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	styles: [styles]
 })
 export class AppComponent {}
 

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { RestService } from './rest.service';
 import { Observable } from 'rxjs';
-import { ServersDto, Dictionary } from '../models/types';
 import { ServersMeta, ServerModel } from '../models/server';
 import { map } from 'rxjs/operators';
+import { ServerToggleDto } from '../../models/types';
 
 @Injectable({ providedIn: 'root' })
 export class CommandService {
@@ -15,16 +15,16 @@ export class CommandService {
 
 	public getProxies(): Observable<ServersMeta> {
 		return this.rest.getProxies().pipe(
-			map((servers) => {
+			map(servers => {
 				const items = servers.items.map(
-					(item) => new ServerModel(item.id, item.host, item.port, item.state, item.stubbs)
+					item => new ServerModel(item.id, item.host, item.port, item.state, item.stubbs)
 				);
 				return new ServersMeta(servers.total, items);
 			})
 		);
 	}
 
-	public toggleService(state: Dictionary<boolean>): Observable<void> {
+	public toggleService(state: ServerToggleDto): Observable<void> {
 		return this.rest.toggleService(state);
 	}
 }
