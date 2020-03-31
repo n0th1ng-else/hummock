@@ -3,7 +3,7 @@ import { HummockConfig } from '../../models/config';
 import { Logger, pGreen } from '../log';
 import { ServerForRecordState } from '../../config';
 
-const logger = new Logger();
+const logger = new Logger('api');
 
 export function pickApiRoutes(app: Application, config: HummockConfig) {
 	const apiRouter = new ApiRouter(config);
@@ -26,13 +26,7 @@ class ApiRouter {
 		this.router.get('/proxies', (req: Request, res: Response, next: NextFunction) => {
 			res.status(200).send({
 				total: this.config.servers.length,
-				items: this.config.servers.map((server) => ({
-					id: server.id,
-					stubbs: server.stubbs,
-					state: server.state,
-					host: server.host,
-					port: server.port
-				}))
+				items: this.config.servers
 			});
 		});
 

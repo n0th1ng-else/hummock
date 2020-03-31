@@ -1,9 +1,9 @@
 import { existsSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
-import { wiremockDownloadUrl, wiremockJarName } from '../../config';
-import { Logger, pGreen, pRed } from '../log';
-import { WiremockConfig } from '../../models/config';
-import { downloadFile } from '../downloader';
+import { Logger, pGreen, pRed } from '../../log';
+import { WiremockConfig } from '../../../models/config';
+import { wiremockDownloadUrl, wiremockJarName } from '../../../config';
+import { downloadFile } from '../../downloader';
 
 const logger = new Logger('wiremock');
 

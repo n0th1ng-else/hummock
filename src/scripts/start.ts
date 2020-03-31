@@ -1,8 +1,8 @@
 import { Logger } from '../server/log';
 import { validate } from './validate';
-import { downloadWiremock } from '../server/wiremock/index';
 import { startServer } from '../server/express';
 import { workDir, defaultConfigPath } from '../config';
+import { downloadWiremock } from '../server/launcher/wiremock';
 
 const logger = new Logger('launcher');
 

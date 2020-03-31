@@ -93,7 +93,7 @@ class ServerForRecord {
 			.replace(/\?/g, '')
 			.replace(/\//g, '');
 		this.workDir = resolve(workingDirRoot, hostEscaped);
-		this.stubbs = getFilesNumberInDir(this.workDir);
+		this.updateStubbCount();
 		if (provider === ProxyProvider.TALKBACK) {
 			this.server = talkback({
 				host: this.host,
@@ -102,6 +102,10 @@ class ServerForRecord {
 				path: this.workDir
 			});
 		}
+	}
+
+	public updateStubbCount(): void {
+		this.stubbs = getFilesNumberInDir(this.workDir);
 	}
 
 	public start(): Promise<void> {
@@ -127,11 +131,7 @@ class ServerForRecord {
 				this.state = ServerForRecordState.IDLE;
 				resolve();
 			});
-		})
-			.then(() => getFilesNumberInDir(this.workDir))
-			.then((stubbs) => {
-				this.stubbs = stubbs;
-			});
+		}).then(() => this.updateStubbCount());
 	}
 }
 
