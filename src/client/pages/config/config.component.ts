@@ -1,10 +1,10 @@
 import { Component, NgModule, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CommandService } from '../../services/command.service';
 import { TitleService } from '../../services/title.service';
 import { NestedTreeControl, CdkTreeModule } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MaterialModule } from '../../app/material.module';
+import { ActivatedRoute } from '@angular/router';
 import styles from './config.component.less';
 
 @Component({
@@ -22,17 +22,11 @@ export class ConfigComponent {
 	constructor(
 		private readonly cdr: ChangeDetectorRef,
 		private readonly titleService: TitleService,
-		private readonly api: CommandService
+		route: ActivatedRoute
 	) {
 		this.titleService.setTitle('Config');
-
-		this.api.getConfig().subscribe(config => {
-			this.config = config;
-
-			this.dataSource.data = this.generateTree(config);
-
-			this.cdr.markForCheck();
-		});
+		this.config = route.snapshot.data.config;
+		this.dataSource.data = this.generateTree(this.config);
 	}
 
 	public hasChild(_: number, node: ConfigNode) {
