@@ -14,7 +14,7 @@ import { CommandService } from '../../services/command.service';
 import { ServerCardComponentModule } from '../../components/server-card/server-card.component';
 import { ServersMeta } from '../../models/server';
 import { NotificationService } from '../../services/notification.service';
-import { startWith } from 'rxjs/operators';
+import { startWith, flatMap, tap } from 'rxjs/operators';
 import { Dictionary } from '../../../models/types';
 import { ActivatedRoute } from '@angular/router';
 import styles from './home.component.less';
@@ -67,19 +67,25 @@ export class HomeComponent implements OnDestroy {
 			ids: filteredIds
 		};
 
-		this.api.toggleService(state).subscribe(() => {
-			this.getData();
+		this.api
+			.toggleService(state)
+			.pipe(
+				tap(() => this.notification.showMessage(state.run ? 'Running 🚀' : 'Stopped 🛑')),
+				flatMap(() => this.api.getProxies())
+			)
+			.subscribe(servers => {
+				this.servers = servers;
+				this.cdr.markForCheck();
 
-			if (!this.serversForm) {
-				return;
-			}
+				if (!this.serversForm) {
+					return;
+				}
 
-			const formValues: Dictionary<boolean> = this.serversForm.value;
-			Object.keys(formValues).forEach(key => (formValues[key] = false));
-			this.allLaunched = this.detectIfAllSelectedServicesLaunched(formValues, this.servers);
-			this.serversForm.patchValue(formValues);
-			this.notification.showMessage('Action triggered 🚀');
-		});
+				const formValues: Dictionary<boolean> = this.serversForm.value;
+				Object.keys(formValues).forEach(key => (formValues[key] = false));
+				this.allLaunched = this.detectIfAllSelectedServicesLaunched(formValues, this.servers);
+				this.serversForm.patchValue(formValues);
+			});
 	}
 
 	private createForm(): void {

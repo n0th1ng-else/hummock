@@ -7,7 +7,20 @@
 				<mat-list-item> <b>Listener</b>: {{ server.mockUrl }} </mat-list-item>
 				<mat-divider></mat-divider>
 				<mat-list-item>
-					<b>Status</b>: <h-host-status [isLaunched]="isLaunched()"></h-host-status>
+					<div class="menu-item-btn">
+						<div>
+							<b>Status</b>:
+							<h-host-status [isLaunched]="isLaunched()"></h-host-status>
+							<span *ngIf="isLaunched()">Running</span>
+							<span *ngIf="!isLaunched()">Idle</span>
+						</div>
+						<div>
+							<button mat-button color="warn" (click)="toggleServer()">
+								<ng-container *ngIf="!isLaunched()">Start server</ng-container>
+								<ng-container *ngIf="isLaunched()">Stop server</ng-container>
+							</button>
+						</div>
+					</div>
 				</mat-list-item>
 				<mat-divider></mat-divider>
 				<mat-list-item> <b>Recorded stubbs count</b>: {{ server.stubbs }} </mat-list-item>
@@ -15,11 +28,7 @@
 		</div>
 		<div class="host-stubbs">
 			<mat-accordion class="example-headers-align">
-				<mat-expansion-panel
-					(opened)="selectStubb(stubb)"
-					(closed)="clearStubbSelection()"
-					*ngFor="let stubb of server.stubbData"
-				>
+				<mat-expansion-panel (opened)="selectStubb(stubb)" *ngFor="let stubb of server.stubbData">
 					<mat-expansion-panel-header>
 						<mat-panel-title>
 							<mat-icon>ac_unit</mat-icon>
