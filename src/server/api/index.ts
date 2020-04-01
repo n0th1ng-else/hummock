@@ -6,10 +6,11 @@ import { ServerToggleDto } from '../../models/types';
 
 const logger = new Logger('api');
 
-export function pickApiRoutes(app: Application, config: HummockConfig) {
+export function pickApiRoutes(app: Application, config: HummockConfig): ApiRouter {
 	const apiRouter = new ApiRouter(config);
 	app.use('/api/v0', apiRouter.router);
 	app.all('/api/*', showNotFound);
+	return apiRouter;
 }
 
 class ApiRouter {
@@ -20,6 +21,10 @@ class ApiRouter {
 	constructor(private readonly config: HummockConfig) {
 		this.launchers = getLaunchers(config);
 		this.handleRoutes();
+	}
+
+	public stopAll(): Promise<void> {
+		return Promise.all(this.launchers.map(launcher => launcher.stop())).then(() => {});
 	}
 
 	private handleRoutes() {

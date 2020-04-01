@@ -1,4 +1,10 @@
-import { Component, NgModule, ChangeDetectionStrategy } from '@angular/core';
+import {
+	Component,
+	NgModule,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	OnDestroy
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { TitleService } from '../../services/title.service';
@@ -14,6 +20,8 @@ import {
 	DialogStubbBodyComponent
 } from '../../components/dialog-stubb-body/dialog-stubb-body.component';
 import styles from './host.component.less';
+import { CommandService } from '../../services/command.service';
+import { switchMap, tap, catchError } from 'rxjs/operators';
 
 @Component({
 	selector: 'h-host',
@@ -21,26 +29,34 @@ import styles from './host.component.less';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	styles: [styles]
 })
-export class HostComponent {
-	public readonly server: ServerModel;
+export class HostComponent implements OnDestroy {
+	public server: ServerModel;
 	public selectedStubb?: StubbDetailsDto;
+	public updater: number;
+	public hasNewData = false;
+
+	private readonly id: string;
 
 	constructor(
 		route: ActivatedRoute,
 		private readonly dialog: MatDialog,
+		private readonly cdr: ChangeDetectorRef,
 		private readonly titleService: TitleService,
-		private readonly notification: NotificationService
+		private readonly notification: NotificationService,
+		private readonly api: CommandService
 	) {
 		this.titleService.setTitle('Host');
 		this.server = route.snapshot.data.server;
+		this.id = this.server.id;
+		this.updater = window.setInterval(() => this.updateData(), 1000);
+	}
+
+	public ngOnDestroy() {
+		this.stopAutoRefresh();
 	}
 
 	public selectStubb(stubb: StubbDetailsDto) {
 		this.selectedStubb = stubb;
-	}
-
-	public clearStubbSelection() {
-		this.selectedStubb = undefined;
 	}
 
 	public showStubbResponseBody() {
@@ -64,6 +80,25 @@ export class HostComponent {
 		return this.server.mockUrl;
 	}
 
+	public toggleServer(): void {
+		const id = this.server.id;
+		const shouldStart = this.isLaunched() ? false : true;
+		this.api
+			.toggleService({ run: shouldStart, ids: [id] })
+			.pipe(
+				tap(() =>
+					this.notification.showMessage(
+						shouldStart ? 'Server is running 🚀' : 'Server was stopped 🛑'
+					)
+				),
+				switchMap(() => this.api.getProxy(id))
+			)
+			.subscribe(server => {
+				this.server = server;
+				this.cdr.markForCheck();
+			});
+	}
+
 	private openBodyEditor(stubb: StubbDetailsDto) {
 		this.dialog
 			.open(DialogStubbBodyComponent, {
@@ -75,6 +110,41 @@ export class HostComponent {
 			.subscribe(result => {
 				console.log('The dialog was closed', result);
 			});
+	}
+
+	private updateData(shouldRefresh = false) {
+		this.api
+			.getProxy(this.id)
+			.pipe(
+				catchError(err => {
+					this.stopAutoRefresh();
+					throw err;
+				})
+			)
+			.subscribe(server => {
+				if (shouldRefresh) {
+					this.server = server;
+				}
+
+				this.hasNewData = this.server.stubbs !== server.stubbs;
+
+				if (!this.updater) {
+					this.updater = window.setInterval(() => this.updateData(), 1000);
+				}
+
+				if (this.hasNewData) {
+					this.stopAutoRefresh();
+				}
+
+				this.cdr.markForCheck();
+			});
+	}
+
+	private stopAutoRefresh() {
+		if (this.updater) {
+			window.clearInterval(this.updater);
+			this.updater = 0;
+		}
 	}
 }
 

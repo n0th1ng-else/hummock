@@ -3,18 +3,17 @@ import {
 	Component,
 	NgModule,
 	ChangeDetectionStrategy,
-	OnDestroy,
-	ChangeDetectorRef
+	ChangeDetectorRef,
+	OnDestroy
 } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
 import { MaterialModule } from '../../app/material.module';
 import { TitleService } from '../../services/title.service';
 import { CommandService } from '../../services/command.service';
 import { ServerCardComponentModule } from '../../components/server-card/server-card.component';
 import { ServersMeta } from '../../models/server';
 import { NotificationService } from '../../services/notification.service';
-import { startWith } from 'rxjs/operators';
+import { startWith, flatMap, tap, catchError } from 'rxjs/operators';
 import { Dictionary } from '../../../models/types';
 import { ActivatedRoute } from '@angular/router';
 import styles from './home.component.less';
@@ -31,8 +30,7 @@ export class HomeComponent implements OnDestroy {
 	public selectedHosts = 0;
 	public selectedAll = true;
 	public allLaunched = 'start';
-
-	private subscription?: Subscription;
+	public updater: number;
 
 	constructor(
 		private readonly titleService: TitleService,
@@ -45,12 +43,13 @@ export class HomeComponent implements OnDestroy {
 		this.titleService.setTitle('Home');
 		this.servers = route.snapshot.data.servers;
 		this.createForm();
+		this.updater = window.setInterval(() => this.updateStubbCount(), 1000);
 	}
 
-	public ngOnDestroy(): void {
-		if (this.subscription) {
-			this.subscription.unsubscribe();
-			this.subscription = undefined;
+	public ngOnDestroy() {
+		if (this.updater) {
+			window.clearInterval(this.updater);
+			this.updater = 0;
 		}
 	}
 
@@ -67,19 +66,25 @@ export class HomeComponent implements OnDestroy {
 			ids: filteredIds
 		};
 
-		this.api.toggleService(state).subscribe(() => {
-			this.getData();
+		this.api
+			.toggleService(state)
+			.pipe(
+				tap(() => this.notification.showMessage(state.run ? 'Running 🚀' : 'Stopped 🛑')),
+				flatMap(() => this.api.getProxies())
+			)
+			.subscribe(servers => {
+				this.servers = servers;
+				this.cdr.markForCheck();
 
-			if (!this.serversForm) {
-				return;
-			}
+				if (!this.serversForm) {
+					return;
+				}
 
-			const formValues: Dictionary<boolean> = this.serversForm.value;
-			Object.keys(formValues).forEach(key => (formValues[key] = false));
-			this.allLaunched = this.detectIfAllSelectedServicesLaunched(formValues, this.servers);
-			this.serversForm.patchValue(formValues);
-			this.notification.showMessage('Action triggered 🚀');
-		});
+				const formValues: Dictionary<boolean> = this.serversForm.value;
+				Object.keys(formValues).forEach(key => (formValues[key] = false));
+				this.allLaunched = this.detectIfAllSelectedServicesLaunched(formValues, this.servers);
+				this.serversForm.patchValue(formValues);
+			});
 	}
 
 	private createForm(): void {
@@ -102,11 +107,28 @@ export class HomeComponent implements OnDestroy {
 		});
 	}
 
-	private getData(): void {
-		this.api.getProxies().subscribe(servers => {
-			this.servers = servers;
-			this.cdr.markForCheck();
-		});
+	private updateStubbCount(): void {
+		this.api
+			.getProxies()
+			.pipe(
+				catchError(err => {
+					if (this.updater) {
+						window.clearInterval(this.updater);
+						this.updater = 0;
+					}
+					throw err;
+				})
+			)
+			.subscribe(servers => {
+				this.servers.items.forEach(server => {
+					const id = server.id;
+					const newServer = servers.items.find(item => item.id === id);
+					if (newServer) {
+						server.stubbs = newServer.stubbs;
+					}
+				});
+				this.cdr.markForCheck();
+			});
 	}
 
 	private detectIfAllSelectedServicesLaunched(
