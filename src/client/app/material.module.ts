@@ -11,6 +11,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule } from '@angular/material/dialog';
 
 require('@angular/material/prebuilt-themes/deeppurple-amber.css');
 
@@ -27,7 +28,8 @@ require('@angular/material/prebuilt-themes/deeppurple-amber.css');
 		MatExpansionModule,
 		MatDividerModule,
 		MatListModule,
-		MatInputModule
+		MatInputModule,
+		MatDialogModule
 	]
 })
 export class MaterialModule {}

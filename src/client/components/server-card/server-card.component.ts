@@ -5,9 +5,9 @@ import { MaterialModule } from '../../app/material.module';
 import { ServerModel } from '../../models/server';
 import { NavigationService } from '../../services/navigation.service';
 import { NotificationService } from '../../services/notification.service';
-import styles from './server-card.component.less';
 import { copyToClipboard } from '../../tools/clipboard';
 import { HostStatusComponentModule } from '../host-status/host-status.component';
+import styles from './server-card.component.less';
 
 @Component({
 	selector: 'h-server-card',
