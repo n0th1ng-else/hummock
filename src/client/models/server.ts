@@ -1,4 +1,5 @@
-import { ServerForRecordState, defaultHost } from '../../config';
+import { defaultHost } from '../../config';
+import { ServerForRecordState } from '../../models/types';
 
 export class ServerModel {
 	constructor(

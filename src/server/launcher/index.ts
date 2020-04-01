@@ -1,7 +1,8 @@
 import { HummockConfig, ServerForRecord } from '../../models/config';
-import { ProxyProvider, ServerForRecordState } from '../../config';
+import { ProxyProvider } from '../../config';
 import { TalkbackServer } from './talkback';
 import { WiremockServer } from './wiremock';
+import { ServerForRecordState, ServerListDetailsDto, ServerDetailsDto } from '../../models/types';
 
 export function getLaunchers(config: HummockConfig): LauncherService[] {
 	switch (config.provider) {
@@ -19,6 +20,6 @@ export interface LauncherService {
 	readonly state: ServerForRecordState;
 	start(): Promise<void>;
 	stop(): Promise<void>;
-	getListDto(): any;
-	getDto(): any;
+	getListDto(): ServerListDetailsDto;
+	getDto(): ServerDetailsDto;
 }

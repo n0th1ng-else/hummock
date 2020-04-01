@@ -1,7 +1,6 @@
 import { Application, Request, Response, NextFunction, Router } from 'express';
 import { HummockConfig } from '../../models/config';
 import { Logger, pGreen, pYellow } from '../log';
-import { ServerForRecordState } from '../../config';
 import { getLaunchers, LauncherService } from '../launcher';
 import { ServerToggleDto } from '../../models/types';
 

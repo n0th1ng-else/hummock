@@ -11,12 +11,12 @@ import { Subscription } from 'rxjs';
 import { MaterialModule } from '../../app/material.module';
 import { TitleService } from '../../services/title.service';
 import { CommandService } from '../../services/command.service';
-import styles from './home.component.less';
-import { Dictionary } from '../../models/types';
 import { ServerCardComponentModule } from '../../components/server-card/server-card.component';
 import { ServersMeta } from '../../models/server';
 import { NotificationService } from '../../services/notification.service';
 import { startWith } from 'rxjs/operators';
+import { Dictionary } from '../../../models/types';
+import styles from './home.component.less';
 
 @Component({
 	selector: 'h-home',
