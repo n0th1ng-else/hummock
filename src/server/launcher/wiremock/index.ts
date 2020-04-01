@@ -2,9 +2,14 @@ import { existsSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
 import { Logger, pGreen, pRed } from '../../log';
 import { WiremockConfig, ServerForRecord } from '../../../models/config';
-import { wiremockDownloadUrl, wiremockJarName, ServerForRecordState } from '../../../config';
+import { wiremockDownloadUrl, wiremockJarName } from '../../../config';
 import { downloadFile } from '../../downloader';
 import { LauncherService } from '..';
+import {
+	ServerForRecordState,
+	ServerListDetailsDto,
+	ServerDetailsDto
+} from '../../../models/types';
 
 const logger = new Logger('wiremock');
 
@@ -43,11 +48,11 @@ export class WiremockServer implements LauncherService {
 		throw new Error('Method not implemented.');
 	}
 
-	public getDto(): any {
+	public getDto(): ServerDetailsDto {
 		throw new Error('Method not implemented.');
 	}
 
-	public getListDto(): any {
+	public getListDto(): ServerListDetailsDto {
 		throw new Error('Method not implemented.');
 	}
 }

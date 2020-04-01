@@ -1,7 +1,11 @@
 import talkback from 'talkback/es6';
 import { LauncherService } from '..';
 import { ServerForRecord } from '../../../models/config';
-import { ServerForRecordState } from '../../../config';
+import {
+	ServerForRecordState,
+	ServerListDetailsDto,
+	ServerDetailsDto
+} from '../../../models/types';
 
 export class TalkbackServer implements LauncherService {
 	private stateParam = ServerForRecordState.IDLE;
@@ -44,24 +48,28 @@ export class TalkbackServer implements LauncherService {
 		});
 	}
 
-	public getDto(): any {
+	public getDto(): ServerDetailsDto {
 		return {
-			stubbsData: this.server.getStubbData(),
 			state: this.state,
 			id: this.server.id,
 			host: this.server.host,
 			port: this.server.port,
-			stubbs: this.server.stubbs
+			stubbs: {
+				total: this.server.stubbs,
+				items: this.server.getStubbData()
+			}
 		};
 	}
 
-	public getListDto(): any {
+	public getListDto(): ServerListDetailsDto {
 		return {
 			state: this.state,
 			id: this.server.id,
 			host: this.server.host,
 			port: this.server.port,
-			stubbs: this.server.stubbs
+			stubbs: {
+				total: this.server.stubbs
+			}
 		};
 	}
 

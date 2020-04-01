@@ -16,11 +16,6 @@ export enum ProxyProvider {
 	WIREMOCK = 'wiremock'
 }
 
-export enum ServerForRecordState {
-	IDLE = 'idle',
-	RUN = 'run'
-}
-
 export const firstServerPort = 6000;
 
 export const defaultHost = 'http://localhost';

@@ -1,0 +1,18 @@
+<ng-container>
+	<mat-icon
+		title="Server is not launched"
+		aria-hidden="false"
+		aria-label="Server is not launched"
+		class="state yellow"
+		*ngIf="!isLaunched"
+		>pause_circle_filled</mat-icon
+	>
+	<mat-icon
+		title="Server is launched"
+		aria-hidden="false"
+		aria-label="Server is launched"
+		class="state green"
+		*ngIf="isLaunched"
+		>play_circle_filled</mat-icon
+	>
+</ng-container>
