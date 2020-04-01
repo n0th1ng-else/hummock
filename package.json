@@ -1,7 +1,7 @@
 {
   "name": "hummock",
-  "version": "1.0.0",
-  "description": "Caching responses from real api and use it as the stubbed data",
+  "version": "1.3.0",
+  "description": "Caching responses from real api and use it as the stubbed data (Powered by talkback)",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -13,6 +13,9 @@
   "keywords": [
     "mock",
     "wiremock",
+    "talkback",
+    "proxy",
+    "record",
     "stubb"
   ],
   "author": "Sergey Nikitin <srg.post@gmail.com>",
