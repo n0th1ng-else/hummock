@@ -8,6 +8,9 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+import { MatInputModule } from '@angular/material/input';
 
 require('@angular/material/prebuilt-themes/deeppurple-amber.css');
 
@@ -21,7 +24,10 @@ require('@angular/material/prebuilt-themes/deeppurple-amber.css');
 		MatBadgeModule,
 		MatSnackBarModule,
 		MatTreeModule,
-		MatExpansionModule
+		MatExpansionModule,
+		MatDividerModule,
+		MatListModule,
+		MatInputModule
 	]
 })
 export class MaterialModule {}

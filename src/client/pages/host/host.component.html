@@ -1,1 +1,52 @@
-<div>host</div>
+<div class="host-page-wrapper">
+	<div class="host-page-content">
+		<div class="host-description">
+			<mat-list>
+				<mat-list-item> <b>Origin</b>: {{ server.host }} </mat-list-item>
+				<mat-divider></mat-divider>
+				<mat-list-item> <b>Listener</b>: {{ server.mockUrl }} </mat-list-item>
+				<mat-divider></mat-divider>
+				<mat-list-item>
+					<b>Status</b>: <h-host-status [isLaunched]="isLaunched()"></h-host-status>
+				</mat-list-item>
+				<mat-divider></mat-divider>
+				<mat-list-item> <b>Recorded stubbs count</b>: {{ server.stubbs }} </mat-list-item>
+			</mat-list>
+		</div>
+		<div class="host-stubbs">
+			<mat-accordion class="example-headers-align">
+				<mat-expansion-panel
+					(opened)="selectStubb(stubb)"
+					(closed)="clearStubbSelection()"
+					*ngFor="let stubb of server.stubbData"
+				>
+					<mat-expansion-panel-header>
+						<mat-panel-title>
+							<mat-icon>ac_unit</mat-icon>
+							{{ stubb.name }}
+						</mat-panel-title>
+						<mat-panel-description>
+							{{ stubb.content.req.url }}
+						</mat-panel-description>
+					</mat-expansion-panel-header>
+
+					<mat-list>
+						<mat-list-item>
+							<b>Request</b>: {{ stubb.content.meta.host }}{{ stubb.content.req.url }}
+						</mat-list-item>
+						<mat-divider></mat-divider>
+						<mat-list-item> <b>Method</b>: {{ stubb.content.req.method }} </mat-list-item>
+						<mat-divider></mat-divider>
+						<mat-list-item> <b>Status</b>: {{ stubb.content.res.status }} </mat-list-item>
+					</mat-list>
+
+					<mat-action-row>
+						<button mat-raised-button color="primary" (click)="showStubbResponseBody()">
+							Read or Edit response body
+						</button>
+					</mat-action-row>
+				</mat-expansion-panel>
+			</mat-accordion>
+		</div>
+	</div>
+</div>

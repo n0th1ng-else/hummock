@@ -6,6 +6,8 @@ import { ServerModel } from '../../models/server';
 import { NavigationService } from '../../services/navigation.service';
 import { NotificationService } from '../../services/notification.service';
 import styles from './server-card.component.less';
+import { copyToClipboard } from '../../tools/clipboard';
+import { HostStatusComponentModule } from '../host-status/host-status.component';
 
 @Component({
 	selector: 'h-server-card',
@@ -31,17 +33,7 @@ export class ServerCardComponent {
 	}
 
 	public copyMockName(): void {
-		const hostName = this.getMockName();
-		const clipboardElement = document.createElement('textarea');
-		clipboardElement.value = hostName;
-		clipboardElement.setAttribute('readonly', '');
-		clipboardElement.style.position = 'absolute';
-		clipboardElement.style.left = '-9999px';
-		clipboardElement.style.display = 'none;';
-		document.body.appendChild(clipboardElement);
-		clipboardElement.select();
-		document.execCommand('copy');
-		document.body.removeChild(clipboardElement);
+		copyToClipboard(this.getMockName());
 		this.notification.showMessage('Copied to clipboard 🍕');
 	}
 
@@ -51,7 +43,13 @@ export class ServerCardComponent {
 }
 
 @NgModule({
-	imports: [CommonModule, MaterialModule, FormsModule, ReactiveFormsModule],
+	imports: [
+		CommonModule,
+		MaterialModule,
+		FormsModule,
+		ReactiveFormsModule,
+		HostStatusComponentModule
+	],
 	declarations: [ServerCardComponent],
 	exports: [ServerCardComponent]
 })
