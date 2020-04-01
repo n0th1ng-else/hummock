@@ -6,7 +6,7 @@ import { downloadWiremock } from '../server/launcher/wiremock';
 
 const logger = new Logger('launcher');
 
-export async function run() {
+export async function run(): Promise<void> {
 	logger.info('Validating config... 💥');
 	const config = validate(defaultConfigPath, workDir);
 

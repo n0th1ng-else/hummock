@@ -1,4 +1,10 @@
-import { Component, NgModule, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+	Component,
+	NgModule,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	OnDestroy
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { TitleService } from '../../services/title.service';
@@ -15,7 +21,7 @@ import {
 } from '../../components/dialog-stubb-body/dialog-stubb-body.component';
 import styles from './host.component.less';
 import { CommandService } from '../../services/command.service';
-import { switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap, catchError } from 'rxjs/operators';
 
 @Component({
 	selector: 'h-host',
@@ -23,9 +29,12 @@ import { switchMap, tap } from 'rxjs/operators';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	styles: [styles]
 })
-export class HostComponent {
+export class HostComponent implements OnDestroy {
 	public server: ServerModel;
 	public selectedStubb?: StubbDetailsDto;
+	public updater: number;
+
+	private readonly id: string;
 
 	constructor(
 		route: ActivatedRoute,
@@ -37,6 +46,15 @@ export class HostComponent {
 	) {
 		this.titleService.setTitle('Host');
 		this.server = route.snapshot.data.server;
+		this.id = this.server.id;
+		this.updater = window.setInterval(() => this.updateData(), 1000);
+	}
+
+	public ngOnDestroy() {
+		if (this.updater) {
+			window.clearInterval(this.updater);
+			this.updater = 0;
+		}
 	}
 
 	public selectStubb(stubb: StubbDetailsDto) {
@@ -93,6 +111,24 @@ export class HostComponent {
 			.afterClosed()
 			.subscribe(result => {
 				console.log('The dialog was closed', result);
+			});
+	}
+
+	private updateData() {
+		this.api
+			.getProxy(this.id)
+			.pipe(
+				catchError(err => {
+					if (this.updater) {
+						window.clearInterval(this.updater);
+						this.updater = 0;
+					}
+					throw err;
+				})
+			)
+			.subscribe(server => {
+				this.server = server;
+				this.cdr.markForCheck();
 			});
 	}
 }

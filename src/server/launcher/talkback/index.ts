@@ -49,6 +49,7 @@ export class TalkbackServer implements LauncherService {
 	}
 
 	public getDto(): ServerDetailsDto {
+		this.server.updateStubbCount();
 		return {
 			state: this.state,
 			id: this.server.id,
@@ -62,6 +63,7 @@ export class TalkbackServer implements LauncherService {
 	}
 
 	public getListDto(): ServerListDetailsDto {
+		this.server.updateStubbCount();
 		return {
 			state: this.state,
 			id: this.server.id,

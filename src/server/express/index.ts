@@ -11,9 +11,14 @@ import { HummockConfig } from '../../models/config';
 const logger = new Logger('express');
 
 export async function startServer(config: HummockConfig, port = 3000): Promise<void> {
-	return new Promise((resolve, reject) => {
+	return new Promise(resolve => {
 		const app: express.Application = express();
 		app.use(express.json());
+		app.set('etag', false);
+		app.use((req, res, next) => {
+			res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+			next();
+		});
 
 		// TODO implement production mode
 		const compiler = webpack(getConfig(false));
