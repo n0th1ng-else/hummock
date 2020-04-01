@@ -43,7 +43,7 @@ export class HomeComponent implements OnDestroy {
 		this.titleService.setTitle('Home');
 		this.servers = route.snapshot.data.servers;
 		this.createForm();
-		this.updater = window.setInterval(() => this.updateData(), 1000);
+		this.updater = window.setInterval(() => this.updateStubbCount(), 1000);
 	}
 
 	public ngOnDestroy() {
@@ -107,7 +107,7 @@ export class HomeComponent implements OnDestroy {
 		});
 	}
 
-	private updateData(): void {
+	private updateStubbCount(): void {
 		this.api
 			.getProxies()
 			.pipe(
@@ -120,7 +120,13 @@ export class HomeComponent implements OnDestroy {
 				})
 			)
 			.subscribe(servers => {
-				this.servers = servers;
+				this.servers.items.forEach(server => {
+					const id = server.id;
+					const newServer = servers.items.find(item => item.id === id);
+					if (newServer) {
+						server.stubbs = newServer.stubbs;
+					}
+				});
 				this.cdr.markForCheck();
 			});
 	}

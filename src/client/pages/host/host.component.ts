@@ -33,6 +33,7 @@ export class HostComponent implements OnDestroy {
 	public server: ServerModel;
 	public selectedStubb?: StubbDetailsDto;
 	public updater: number;
+	public hasNewData = false;
 
 	private readonly id: string;
 
@@ -51,10 +52,7 @@ export class HostComponent implements OnDestroy {
 	}
 
 	public ngOnDestroy() {
-		if (this.updater) {
-			window.clearInterval(this.updater);
-			this.updater = 0;
-		}
+		this.stopAutoRefresh();
 	}
 
 	public selectStubb(stubb: StubbDetailsDto) {
@@ -114,22 +112,39 @@ export class HostComponent implements OnDestroy {
 			});
 	}
 
-	private updateData() {
+	private updateData(shouldRefresh = false) {
 		this.api
 			.getProxy(this.id)
 			.pipe(
 				catchError(err => {
-					if (this.updater) {
-						window.clearInterval(this.updater);
-						this.updater = 0;
-					}
+					this.stopAutoRefresh();
 					throw err;
 				})
 			)
 			.subscribe(server => {
-				this.server = server;
+				if (shouldRefresh) {
+					this.server = server;
+				}
+
+				this.hasNewData = this.server.stubbs !== server.stubbs;
+
+				if (!this.updater) {
+					this.updater = window.setInterval(() => this.updateData(), 1000);
+				}
+
+				if (this.hasNewData) {
+					this.stopAutoRefresh();
+				}
+
 				this.cdr.markForCheck();
 			});
+	}
+
+	private stopAutoRefresh() {
+		if (this.updater) {
+			window.clearInterval(this.updater);
+			this.updater = 0;
+		}
 	}
 }
 

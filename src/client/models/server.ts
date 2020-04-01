@@ -15,7 +15,7 @@ export class ServerModel {
 		public readonly host: string,
 		public readonly port: number,
 		public readonly state: ServerForRecordState,
-		public readonly stubbs: number,
+		public stubbs: number,
 		public readonly stubbData?: StubbDetailsDto[]
 	) {}
 }

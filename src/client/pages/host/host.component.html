@@ -15,7 +15,7 @@
 							<span *ngIf="!isLaunched()">Idle</span>
 						</div>
 						<div>
-							<button mat-button color="warn" (click)="toggleServer()">
+							<button mat-button color="primary" (click)="toggleServer()">
 								<ng-container *ngIf="!isLaunched()">Start server</ng-container>
 								<ng-container *ngIf="isLaunched()">Stop server</ng-container>
 							</button>
@@ -23,7 +23,16 @@
 					</div>
 				</mat-list-item>
 				<mat-divider></mat-divider>
-				<mat-list-item> <b>Recorded stubbs count</b>: {{ server.stubbs }} </mat-list-item>
+				<mat-list-item>
+					<div class="menu-item-btn">
+						<div><b>Recorded stubbs count</b>: {{ server.stubbs }}</div>
+						<div>
+							<button mat-button color="warn" *ngIf="hasNewData" (click)="updateData(true)">
+								Refresh stubb list
+							</button>
+						</div>
+					</div>
+				</mat-list-item>
 			</mat-list>
 		</div>
 		<div class="host-stubbs">
