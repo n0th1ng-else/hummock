@@ -4,11 +4,15 @@ import { ConfigComponent } from '../pages/config/config.component';
 import { HomeComponent } from '../pages/home/home.component';
 import { HostComponent } from '../pages/host/host.component';
 import { ServerResolver } from '../resolvers/server.resolver';
+import { ServersResolver } from '../resolvers/servers.resolver';
 
 const appRoutes: Routes = [
 	{
 		path: '',
-		component: HomeComponent
+		component: HomeComponent,
+		resolve: {
+			servers: ServersResolver
+		}
 	},
 	{
 		path: 'config',

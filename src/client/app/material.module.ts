@@ -7,6 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTreeModule } from '@angular/material/tree';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 require('@angular/material/prebuilt-themes/deeppurple-amber.css');
 
@@ -19,7 +20,8 @@ require('@angular/material/prebuilt-themes/deeppurple-amber.css');
 		MatCheckboxModule,
 		MatBadgeModule,
 		MatSnackBarModule,
-		MatTreeModule
+		MatTreeModule,
+		MatExpansionModule
 	]
 })
 export class MaterialModule {}

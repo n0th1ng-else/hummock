@@ -36,7 +36,7 @@ interface ServerCoreDetailsDto {
 	port: number;
 }
 
-interface StubbDetailsDto {
+export interface StubbDetailsDto {
 	name: string;
 	content: {
 		meta: {

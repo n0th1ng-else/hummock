@@ -27,7 +27,7 @@ export class ServerCardComponent {
 	}
 
 	public isLaunched(): boolean {
-		return this.server.isLaunched();
+		return this.server.isLaunched;
 	}
 
 	public copyMockName(): void {
@@ -46,7 +46,7 @@ export class ServerCardComponent {
 	}
 
 	public getMockName(): string {
-		return this.server.getMock();
+		return this.server.mockUrl;
 	}
 }
 

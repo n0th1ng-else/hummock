@@ -1,7 +1,9 @@
 import { Component, NgModule, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TitleService } from '../../services/title.service';
 import { ActivatedRoute } from '@angular/router';
+import { TitleService } from '../../services/title.service';
+import { MaterialModule } from '../../app/material.module';
+import { ServerModel } from '../../models/server';
 
 @Component({
 	selector: 'h-host',
@@ -9,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HostComponent {
-	public readonly server;
+	public readonly server: ServerModel;
 
 	constructor(route: ActivatedRoute, private readonly titleService: TitleService) {
 		this.titleService.setTitle('Host');
@@ -20,7 +22,7 @@ export class HostComponent {
 
 @NgModule({
 	declarations: [HostComponent],
-	imports: [CommonModule],
+	imports: [CommonModule, MaterialModule],
 	exports: [HostComponent]
 })
 export class HostComponentModule {}

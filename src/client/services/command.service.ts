@@ -24,8 +24,22 @@ export class CommandService {
 		);
 	}
 
-	public getProxy(id: string) {
-		return this.rest.getProxy(id);
+	public getProxy(id: string): Observable<ServerModel> {
+		return this.rest
+			.getProxy(id)
+			.pipe(
+				map(
+					server =>
+						new ServerModel(
+							server.id,
+							server.host,
+							server.port,
+							server.state,
+							server.stubbs.total,
+							server.stubbs.items
+						)
+				)
+			);
 	}
 
 	public toggleService(state: ServerToggleDto): Observable<void> {

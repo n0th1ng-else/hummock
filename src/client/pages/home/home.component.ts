@@ -16,6 +16,7 @@ import { ServersMeta } from '../../models/server';
 import { NotificationService } from '../../services/notification.service';
 import { startWith } from 'rxjs/operators';
 import { Dictionary } from '../../../models/types';
+import { ActivatedRoute } from '@angular/router';
 import styles from './home.component.less';
 
 @Component({
@@ -25,7 +26,7 @@ import styles from './home.component.less';
 	styles: [styles]
 })
 export class HomeComponent implements OnDestroy {
-	public servers?: ServersMeta;
+	public servers: ServersMeta;
 	public serversForm?: FormGroup;
 	public selectedHosts = 0;
 	public selectedAll = true;
@@ -38,10 +39,12 @@ export class HomeComponent implements OnDestroy {
 		private readonly fb: FormBuilder,
 		private readonly cdr: ChangeDetectorRef,
 		private readonly api: CommandService,
-		private readonly notification: NotificationService
+		private readonly notification: NotificationService,
+		route: ActivatedRoute
 	) {
 		this.titleService.setTitle('Home');
-		this.getData(() => this.createForm());
+		this.servers = route.snapshot.data.servers;
+		this.createForm();
 	}
 
 	public ngOnDestroy(): void {
@@ -60,7 +63,7 @@ export class HomeComponent implements OnDestroy {
 		const state = {
 			run: !!this.servers.items
 				.filter(server => filteredIds.includes(server.id))
-				.find(server => !server.isLaunched()),
+				.find(server => !server.isLaunched),
 			ids: filteredIds
 		};
 
@@ -99,12 +102,9 @@ export class HomeComponent implements OnDestroy {
 		});
 	}
 
-	private getData(onData?: () => void): void {
+	private getData(): void {
 		this.api.getProxies().subscribe(servers => {
 			this.servers = servers;
-			if (onData) {
-				onData();
-			}
 			this.cdr.markForCheck();
 		});
 	}
@@ -120,7 +120,7 @@ export class HomeComponent implements OnDestroy {
 		const ids = allSelected ? Object.keys(form) : Object.keys(form).filter(id => form[id]);
 		const allStopped = ids.find(id => {
 			const server = servers.items.find(item => item.id === id);
-			return server && !server.isLaunched();
+			return server && !server.isLaunched;
 		});
 
 		return allStopped ? 'start' : 'stop';

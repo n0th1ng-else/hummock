@@ -1,28 +1,21 @@
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { NavigationService } from '../services/navigation.service';
 import { NotificationService } from '../services/notification.service';
-import { ServerModel } from '../models/server';
+import { ServersMeta } from '../models/server';
 import { CommandService } from '../services/command.service';
 
 @Injectable({ providedIn: 'root' })
-export class ServerResolver implements Resolve<ServerModel> {
+export class ServersResolver implements Resolve<ServersMeta> {
 	constructor(
 		private readonly navigation: NavigationService,
 		private readonly api: CommandService,
 		private readonly notification: NotificationService
 	) {}
 
-	public resolve(route: ActivatedRouteSnapshot): Observable<ServerModel> {
+	public resolve(route: ActivatedRouteSnapshot): Observable<ServersMeta> {
 		const id = route.paramMap.get('hostId');
-		return this.api.getProxy(id).pipe(
-			catchError(err => {
-				this.notification.showMessage(`Host with id=${id} not found 🌑`);
-				this.navigation.toHome();
-				throw err;
-			})
-		);
+		return this.api.getProxies();
 	}
 }

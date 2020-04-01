@@ -1,22 +1,23 @@
 import { defaultHost } from '../../config';
-import { ServerForRecordState } from '../../models/types';
+import { ServerForRecordState, StubbDetailsDto } from '../../models/types';
 
 export class ServerModel {
+	public get isLaunched(): boolean {
+		return this.state === ServerForRecordState.RUN;
+	}
+
+	public get mockUrl(): string {
+		return `${defaultHost}:${this.port}`;
+	}
+
 	constructor(
 		public readonly id: string,
 		public readonly host: string,
 		public readonly port: number,
 		public readonly state: ServerForRecordState,
-		public readonly stubbs: number
+		public readonly stubbs: number,
+		public readonly stubbData?: StubbDetailsDto[]
 	) {}
-
-	public isLaunched(): boolean {
-		return this.state === ServerForRecordState.RUN;
-	}
-
-	public getMock(): string {
-		return `${defaultHost}:${this.port}`;
-	}
 }
 
 export class ServersMeta {
