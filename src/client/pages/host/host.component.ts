@@ -13,7 +13,7 @@ import { ServerModel } from '../../models/server';
 import { copyToClipboard } from '../../tools/clipboard';
 import { NotificationService } from '../../services/notification.service';
 import { HostStatusComponentModule } from '../../components/host-status/host-status.component';
-import { StubbDetailsDto } from '../../../models/types';
+import { StubbDetailsDto, StubbFileDto } from '../../../models/types';
 import { MatDialog } from '@angular/material/dialog';
 import {
 	DialogStubbBodyComponentModule,
@@ -21,7 +21,7 @@ import {
 } from '../../components/dialog-stubb-body/dialog-stubb-body.component';
 import styles from './host.component.less';
 import { CommandService } from '../../services/command.service';
-import { switchMap, tap, catchError } from 'rxjs/operators';
+import { switchMap, tap, catchError, filter, flatMap } from 'rxjs/operators';
 
 @Component({
 	selector: 'h-host',
@@ -31,7 +31,6 @@ import { switchMap, tap, catchError } from 'rxjs/operators';
 })
 export class HostComponent implements OnDestroy {
 	public server: ServerModel;
-	public selectedStubb?: StubbDetailsDto;
 	public updater: number;
 	public hasNewData = false;
 
@@ -51,20 +50,24 @@ export class HostComponent implements OnDestroy {
 		this.updater = window.setInterval(() => this.updateData(), 1000);
 	}
 
-	public ngOnDestroy() {
+	public ngOnDestroy(): void {
 		this.stopAutoRefresh();
 	}
 
-	public selectStubb(stubb: StubbDetailsDto) {
-		this.selectedStubb = stubb;
+	public copyListenerUrl(): void {
+		copyToClipboard(this.server.mockUrl);
+		this.notification.showMessage('Copied to clipboard 🍕');
 	}
 
-	public showStubbResponseBody() {
-		if (!this.selectedStubb) {
-			return;
-		}
+	public showStubbResponseBody(stubb: StubbDetailsDto): void {
+		this.openBodyEditor(stubb);
+	}
 
-		this.openBodyEditor(this.selectedStubb);
+	public deleteStubb(stubb: StubbDetailsDto): void {
+		this.api.deleteStubb(this.id, stubb).subscribe(() => {
+			this.updateData(true);
+			this.notification.showMessage('Stubb was deleted');
+		});
 	}
 
 	public isLaunched(): boolean {
@@ -99,7 +102,7 @@ export class HostComponent implements OnDestroy {
 			});
 	}
 
-	private openBodyEditor(stubb: StubbDetailsDto) {
+	private openBodyEditor(stubb: StubbDetailsDto): void {
 		this.dialog
 			.open(DialogStubbBodyComponent, {
 				width: '50%',
@@ -107,12 +110,27 @@ export class HostComponent implements OnDestroy {
 				data: stubb
 			})
 			.afterClosed()
-			.subscribe(result => {
-				console.log('The dialog was closed', result);
+			.pipe(
+				filter((result?: string) => result !== undefined),
+				flatMap((result: string) => {
+					const res = stubb.content.res;
+					const content: StubbFileDto = {
+						...stubb.content,
+						res: { status: res.status, headers: res.headers, body: result }
+					};
+					return this.api.updateStubb(this.id, { name: stubb.name, content });
+				})
+			)
+			.subscribe(() => {
+				this.notification.showMessage('Stubb was updated');
 			});
 	}
 
-	private updateData(shouldRefresh = false) {
+	public isOptionsRequest(stubb: StubbDetailsDto): boolean {
+		return stubb.content.req.method === 'OPTIONS';
+	}
+
+	private updateData(shouldRefresh = false): void {
 		this.api
 			.getProxy(this.id)
 			.pipe(
@@ -140,7 +158,7 @@ export class HostComponent implements OnDestroy {
 			});
 	}
 
-	private stopAutoRefresh() {
+	private stopAutoRefresh(): void {
 		if (this.updater) {
 			window.clearInterval(this.updater);
 			this.updater = 0;

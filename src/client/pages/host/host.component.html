@@ -4,7 +4,14 @@
 			<mat-list>
 				<mat-list-item> <b>Origin</b>: {{ server.host }} </mat-list-item>
 				<mat-divider></mat-divider>
-				<mat-list-item> <b>Listener</b>: {{ server.mockUrl }} </mat-list-item>
+				<mat-list-item>
+					<div class="menu-item-btn">
+						<div><b>Listener</b>: {{ server.mockUrl }}</div>
+						<div>
+							<button mat-button color="accent" (click)="copyListenerUrl()">Copy URL</button>
+						</div>
+					</div>
+				</mat-list-item>
 				<mat-divider></mat-divider>
 				<mat-list-item>
 					<div class="menu-item-btn">
@@ -37,10 +44,16 @@
 		</div>
 		<div class="host-stubbs">
 			<mat-accordion class="example-headers-align">
-				<mat-expansion-panel (opened)="selectStubb(stubb)" *ngFor="let stubb of server.stubbData">
+				<mat-expansion-panel
+					[ngClass]="{ 'is-options': isOptionsRequest(stubb) }"
+					*ngFor="let stubb of server.stubbData"
+				>
 					<mat-expansion-panel-header>
 						<mat-panel-title>
-							<mat-icon>ac_unit</mat-icon>
+							<mat-icon>
+								<ng-container *ngIf="!isOptionsRequest(stubb)">ac_unit</ng-container>
+								<ng-container *ngIf="isOptionsRequest(stubb)">360</ng-container>
+							</mat-icon>
 							{{ stubb.name }}
 						</mat-panel-title>
 						<mat-panel-description>
@@ -59,7 +72,10 @@
 					</mat-list>
 
 					<mat-action-row>
-						<button mat-raised-button color="primary" (click)="showStubbResponseBody()">
+						<button mat-button color="warn" (click)="deleteStubb(stubb)">
+							Delete
+						</button>
+						<button mat-raised-button color="primary" (click)="showStubbResponseBody(stubb)">
 							Read or Edit response body
 						</button>
 					</mat-action-row>

@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ServerToggleDto, ServerListDto, ServerDetailsDto } from '../../models/types';
+import {
+	ServerToggleDto,
+	ServerListDto,
+	ServerDetailsDto,
+	StubbDetailsDto
+} from '../../models/types';
 
 @Injectable({ providedIn: 'root' })
 export class RestService {
@@ -20,6 +25,19 @@ export class RestService {
 
 	public getProxy(id: string): Observable<ServerDetailsDto> {
 		return this.http.get<ServerDetailsDto>(this.getPath(['proxies', id]));
+	}
+
+	public updateStubb(id: string, data: StubbDetailsDto): Observable<void> {
+		return this.http.put<void>(
+			this.getPath(['proxies', id, 'stubb', encodeURIComponent(data.name)]),
+			data
+		);
+	}
+
+	public deleteStubb(id: string, data: StubbDetailsDto): Observable<void> {
+		return this.http.delete<void>(
+			this.getPath(['proxies', id, 'stubb', encodeURIComponent(data.name)])
+		);
 	}
 
 	public toggleService(state: ServerToggleDto): Observable<void> {

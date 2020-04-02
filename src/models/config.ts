@@ -1,8 +1,9 @@
 import { nanoid } from 'nanoid';
 import { resolve } from 'path';
-import { readdirSync, existsSync } from 'fs';
 import { defaultWiremockVersion, ProxyProvider, firstServerPort } from '../config';
-import { getFilesNumberInDir, getFilesInDir } from '../server/files';
+import { getFilesNumberInDir, getFilesInDir, writeFileOnDisk, deleteFile } from '../server/files';
+import { StubbDetailsDto } from './types';
+import { cleanupString } from './common';
 
 export interface HummockConfigDto {
 	provider?: ProxyProvider;
@@ -67,14 +68,7 @@ export class ServerForRecord {
 	public stubbs = 0;
 
 	constructor(public readonly host: string, public readonly port: number, workingDirRoot: string) {
-		const hostEscaped = host
-			.replace(/\./g, '')
-			.replace(/\/\//g, '')
-			.replace(/\:/g, '')
-			.replace(/\:/g, '')
-			.replace(/\#/g, '')
-			.replace(/\?/g, '')
-			.replace(/\//g, '');
+		const hostEscaped = cleanupString(host);
 		this.workDir = resolve(workingDirRoot, hostEscaped);
 		this.updateStubbCount();
 	}
@@ -83,8 +77,16 @@ export class ServerForRecord {
 		this.stubbs = getFilesNumberInDir(this.workDir);
 	}
 
-	public getStubbData(): any[] {
+	public getStubbData(): StubbDetailsDto[] {
 		return getFilesInDir(this.workDir);
+	}
+
+	public updateStubb(stubb: StubbDetailsDto): void {
+		writeFileOnDisk(this.workDir, stubb.name, stubb.content);
+	}
+
+	public deleteStubb(stubbId: string): void {
+		deleteFile(this.workDir, stubbId);
 	}
 }
 

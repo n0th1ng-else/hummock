@@ -2,7 +2,7 @@ import { Application, Request, Response, NextFunction, Router } from 'express';
 import { HummockConfig } from '../../models/config';
 import { Logger, pGreen, pYellow } from '../log';
 import { getLaunchers, LauncherService } from '../launcher';
-import { ServerToggleDto } from '../../models/types';
+import { ServerToggleDto, StubbDetailsDto } from '../../models/types';
 
 const logger = new Logger('api');
 
@@ -50,6 +50,60 @@ class ApiRouter {
 
 			res.status(200).send(launcher.getDto());
 		});
+
+		this.router.put(
+			'/proxies/:proxyId/stubb/:stubbId',
+			(req: Request, res: Response, next: NextFunction) => {
+				const id = req.params.proxyId;
+				const stubbData: StubbDetailsDto = req.body;
+
+				const launcher = this.launchers.find(instance => instance.server.id === id);
+
+				if (!launcher) {
+					res.status(404).send({ message: `Host with id=${id} not found` });
+					return;
+				}
+
+				const wasLaunched = launcher.isLaunched();
+				launcher
+					.stop()
+					.then(() => launcher.updateStubb(stubbData))
+					.then(() => wasLaunched && launcher.start())
+					.then(() => res.status(200).send({}))
+					.catch(err => {
+						logger.error(err);
+						res
+							.status(400)
+							.send({ message: `Unable to update stubb ${stubbData.name} for id ${id}` });
+					});
+			}
+		);
+
+		this.router.delete(
+			'/proxies/:proxyId/stubb/:stubbId',
+			(req: Request, res: Response, next: NextFunction) => {
+				const id = req.params.proxyId;
+				const stubbId = decodeURIComponent(req.params.stubbId);
+
+				const launcher = this.launchers.find(instance => instance.server.id === id);
+
+				if (!launcher) {
+					res.status(404).send({ message: `Host with id=${id} not found` });
+					return;
+				}
+
+				const wasLaunched = launcher.isLaunched();
+				launcher
+					.stop()
+					.then(() => launcher.deleteStubb(stubbId))
+					.then(() => wasLaunched && launcher.start())
+					.then(() => res.status(200).send({}))
+					.catch(err => {
+						logger.error(err);
+						res.status(400).send({ message: `Unable to update stubb ${stubbId} for id ${id}` });
+					});
+			}
+		);
 
 		this.router.post('/proxies', (req: Request, res: Response, next: NextFunction) => {
 			const toggleData: ServerToggleDto = req.body;

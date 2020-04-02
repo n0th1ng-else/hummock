@@ -38,20 +38,23 @@ interface ServerCoreDetailsDto {
 
 export interface StubbDetailsDto {
 	name: string;
-	content: {
-		meta: {
-			createdAt: string;
-			host: string;
-		};
-		req: {
-			url: string;
-			method: string;
-			headers: Dictionary<string>;
-			body: string;
-		};
-		res: {
-			status: number;
-			body: string;
-		};
+	content: StubbFileDto;
+}
+
+export interface StubbFileDto {
+	meta: {
+		createdAt: string;
+		host: string;
+	};
+	req: {
+		url: string;
+		method: string;
+		headers: Dictionary<string>;
+		body: string;
+	};
+	res: {
+		status: number;
+		headers: Dictionary<string[]>;
+		body: string;
 	};
 }

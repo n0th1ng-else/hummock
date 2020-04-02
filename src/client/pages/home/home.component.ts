@@ -11,7 +11,7 @@ import { MaterialModule } from '../../app/material.module';
 import { TitleService } from '../../services/title.service';
 import { CommandService } from '../../services/command.service';
 import { ServerCardComponentModule } from '../../components/server-card/server-card.component';
-import { ServersMeta } from '../../models/server';
+import { ServersMeta, ServerModel } from '../../models/server';
 import { NotificationService } from '../../services/notification.service';
 import { startWith, flatMap, tap, catchError } from 'rxjs/operators';
 import { Dictionary } from '../../../models/types';
@@ -31,6 +31,7 @@ export class HomeComponent implements OnDestroy {
 	public selectedAll = true;
 	public allLaunched = 'start';
 	public updater: number;
+	public stubbsCount: Dictionary<number>;
 
 	constructor(
 		private readonly titleService: TitleService,
@@ -42,6 +43,10 @@ export class HomeComponent implements OnDestroy {
 	) {
 		this.titleService.setTitle('Home');
 		this.servers = route.snapshot.data.servers;
+		this.stubbsCount = this.servers.items.reduce<Dictionary<number>>((res, server) => {
+			res[server.id] = server.stubbs;
+			return res;
+		}, {});
 		this.createForm();
 		this.updater = window.setInterval(() => this.updateStubbCount(), 1000);
 	}
@@ -87,6 +92,10 @@ export class HomeComponent implements OnDestroy {
 			});
 	}
 
+	public getStubbCount(server: ServerModel): number {
+		return this.stubbsCount[server.id];
+	}
+
 	private createForm(): void {
 		const group = this.servers.items.reduce<Dictionary<false>>((res, item) => {
 			res[item.id] = false;
@@ -120,13 +129,10 @@ export class HomeComponent implements OnDestroy {
 				})
 			)
 			.subscribe(servers => {
-				this.servers.items.forEach(server => {
-					const id = server.id;
-					const newServer = servers.items.find(item => item.id === id);
-					if (newServer) {
-						server.stubbs = newServer.stubbs;
-					}
-				});
+				this.stubbsCount = servers.items.reduce<Dictionary<number>>((res, server) => {
+					res[server.id] = server.stubbs;
+					return res;
+				}, {});
 				this.cdr.markForCheck();
 			});
 	}
