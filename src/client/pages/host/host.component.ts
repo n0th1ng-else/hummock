@@ -22,6 +22,10 @@ import {
 import styles from './host.component.less';
 import { CommandService } from '../../services/command.service';
 import { switchMap, tap, catchError, filter, flatMap } from 'rxjs/operators';
+import {
+	DialogStubbStatusComponent,
+	DialogStubbStatusComponentModule
+} from '../../components/dialog-stubb-status/dialog-stubb-status.component';
 
 @Component({
 	selector: 'h-host',
@@ -57,6 +61,10 @@ export class HostComponent implements OnDestroy {
 	public copyListenerUrl(): void {
 		copyToClipboard(this.server.mockUrl);
 		this.notification.showMessage('Copied to clipboard 🍕');
+	}
+
+	public changeStubbStatus(stubb: StubbDetailsDto): void {
+		this.openStatusDialog(stubb);
 	}
 
 	public showStubbResponseBody(stubb: StubbDetailsDto): void {
@@ -126,6 +134,30 @@ export class HostComponent implements OnDestroy {
 			});
 	}
 
+	private openStatusDialog(stubb: StubbDetailsDto): void {
+		this.dialog
+			.open(DialogStubbStatusComponent, {
+				data: stubb
+			})
+			.afterClosed()
+			.pipe(
+				filter((result?: number) => !!result),
+				flatMap((result: number) => {
+					stubb.content.res.status = result;
+					const res = stubb.content.res;
+					const content: StubbFileDto = {
+						...stubb.content,
+						res: { status: result, headers: res.headers, body: res.body }
+					};
+					return this.api.updateStubb(this.id, { name: stubb.name, content });
+				})
+			)
+			.subscribe(() => {
+				this.cdr.markForCheck();
+				this.notification.showMessage('Stubb was updated');
+			});
+	}
+
 	public isOptionsRequest(stubb: StubbDetailsDto): boolean {
 		return stubb.content.req.method === 'OPTIONS';
 	}
@@ -172,7 +204,8 @@ export class HostComponent implements OnDestroy {
 		CommonModule,
 		MaterialModule,
 		HostStatusComponentModule,
-		DialogStubbBodyComponentModule
+		DialogStubbBodyComponentModule,
+		DialogStubbStatusComponentModule
 	],
 	exports: [HostComponent]
 })

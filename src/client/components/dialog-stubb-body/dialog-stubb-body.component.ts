@@ -12,7 +12,6 @@ import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../app/material.module';
 import { StubbDetailsDto } from '../../../models/types';
 import styles from './dialog-stubb-body.component.less';
-import e = require('express');
 import { NotificationService } from '../../services/notification.service';
 
 @Component({
