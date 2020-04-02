@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ServersMeta, ServerModel } from '../models/server';
 import { RestService } from './rest.service';
-import { ServerToggleDto } from '../../models/types';
+import { ServerToggleDto, StubbDetailsDto } from '../../models/types';
 
 @Injectable({ providedIn: 'root' })
 export class CommandService {
@@ -40,6 +40,10 @@ export class CommandService {
 						)
 				)
 			);
+	}
+
+	public updateStubb(id: string, data: StubbDetailsDto): Observable<void> {
+		return this.rest.updateStubb(id, data);
 	}
 
 	public toggleService(state: ServerToggleDto): Observable<void> {

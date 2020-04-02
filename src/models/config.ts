@@ -2,7 +2,8 @@ import { nanoid } from 'nanoid';
 import { resolve } from 'path';
 import { readdirSync, existsSync } from 'fs';
 import { defaultWiremockVersion, ProxyProvider, firstServerPort } from '../config';
-import { getFilesNumberInDir, getFilesInDir } from '../server/files';
+import { getFilesNumberInDir, getFilesInDir, writeFileOnDisk } from '../server/files';
+import { StubbDetailsDto } from './types';
 
 export interface HummockConfigDto {
 	provider?: ProxyProvider;
@@ -83,8 +84,12 @@ export class ServerForRecord {
 		this.stubbs = getFilesNumberInDir(this.workDir);
 	}
 
-	public getStubbData(): any[] {
+	public getStubbData(): StubbDetailsDto[] {
 		return getFilesInDir(this.workDir);
+	}
+
+	public updateStubb(stubb: StubbDetailsDto): void {
+		writeFileOnDisk(this.workDir, stubb.name, stubb.content);
 	}
 }
 

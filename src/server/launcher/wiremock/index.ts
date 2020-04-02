@@ -8,7 +8,8 @@ import { LauncherService } from '..';
 import {
 	ServerForRecordState,
 	ServerListDetailsDto,
-	ServerDetailsDto
+	ServerDetailsDto,
+	StubbDetailsDto
 } from '../../../models/types';
 
 const logger = new Logger('wiremock');
@@ -53,6 +54,14 @@ export class WiremockServer implements LauncherService {
 	}
 
 	public getListDto(): ServerListDetailsDto {
+		throw new Error('Method not implemented.');
+	}
+
+	public updateStubb(stubb: StubbDetailsDto): void {
+		throw new Error('Method not implemented.');
+	}
+
+	public isLaunched(): boolean {
 		throw new Error('Method not implemented.');
 	}
 }

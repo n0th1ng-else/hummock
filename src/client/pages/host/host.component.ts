@@ -13,7 +13,7 @@ import { ServerModel } from '../../models/server';
 import { copyToClipboard } from '../../tools/clipboard';
 import { NotificationService } from '../../services/notification.service';
 import { HostStatusComponentModule } from '../../components/host-status/host-status.component';
-import { StubbDetailsDto } from '../../../models/types';
+import { StubbDetailsDto, StubbFileDto } from '../../../models/types';
 import { MatDialog } from '@angular/material/dialog';
 import {
 	DialogStubbBodyComponentModule,
@@ -21,7 +21,7 @@ import {
 } from '../../components/dialog-stubb-body/dialog-stubb-body.component';
 import styles from './host.component.less';
 import { CommandService } from '../../services/command.service';
-import { switchMap, tap, catchError } from 'rxjs/operators';
+import { switchMap, tap, catchError, filter, flatMap } from 'rxjs/operators';
 
 @Component({
 	selector: 'h-host',
@@ -107,8 +107,19 @@ export class HostComponent implements OnDestroy {
 				data: stubb
 			})
 			.afterClosed()
-			.subscribe(result => {
-				console.log('The dialog was closed', result);
+			.pipe(
+				filter((result?: string) => result !== undefined),
+				flatMap((result: string) => {
+					const res = stubb.content.res;
+					const content: StubbFileDto = {
+						...stubb.content,
+						res: { status: res.status, headers: res.headers, body: result }
+					};
+					return this.api.updateStubb(this.id, { name: stubb.name, content });
+				})
+			)
+			.subscribe(() => {
+				this.notification.showMessage('Stubb was updated');
 			});
 	}
 

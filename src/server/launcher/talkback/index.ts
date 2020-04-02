@@ -4,7 +4,8 @@ import { ServerForRecord } from '../../../models/config';
 import {
 	ServerForRecordState,
 	ServerListDetailsDto,
-	ServerDetailsDto
+	ServerDetailsDto,
+	StubbDetailsDto
 } from '../../../models/types';
 
 export class TalkbackServer implements LauncherService {
@@ -20,7 +21,7 @@ export class TalkbackServer implements LauncherService {
 	}
 
 	public start(): Promise<void> {
-		if (this.state !== ServerForRecordState.IDLE) {
+		if (this.isLaunched()) {
 			return Promise.resolve();
 		}
 
@@ -33,7 +34,7 @@ export class TalkbackServer implements LauncherService {
 	}
 
 	public stop(): Promise<void> {
-		if (this.state !== ServerForRecordState.RUN) {
+		if (!this.isLaunched()) {
 			return Promise.resolve();
 		}
 
@@ -73,6 +74,14 @@ export class TalkbackServer implements LauncherService {
 				total: this.server.stubbs
 			}
 		};
+	}
+
+	public updateStubb(stubb: StubbDetailsDto) {
+		this.server.updateStubb(stubb);
+	}
+
+	public isLaunched(): boolean {
+		return this.state === ServerForRecordState.RUN;
 	}
 
 	private setupMock() {
