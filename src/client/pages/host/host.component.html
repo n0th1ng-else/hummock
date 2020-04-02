@@ -38,7 +38,6 @@
 		<div class="host-stubbs">
 			<mat-accordion class="example-headers-align">
 				<mat-expansion-panel
-					(opened)="selectStubb(stubb)"
 					[ngClass]="{ 'is-options': isOptionsRequest(stubb) }"
 					*ngFor="let stubb of server.stubbData"
 				>
@@ -66,7 +65,10 @@
 					</mat-list>
 
 					<mat-action-row>
-						<button mat-raised-button color="primary" (click)="showStubbResponseBody()">
+						<button mat-button color="warn" (click)="deleteStubb(stubb)">
+							Delete
+						</button>
+						<button mat-raised-button color="primary" (click)="showStubbResponseBody(stubb)">
 							Read or Edit response body
 						</button>
 					</mat-action-row>

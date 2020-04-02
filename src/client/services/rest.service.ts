@@ -28,7 +28,16 @@ export class RestService {
 	}
 
 	public updateStubb(id: string, data: StubbDetailsDto): Observable<void> {
-		return this.http.put<void>(this.getPath(['proxies', id]), data);
+		return this.http.put<void>(
+			this.getPath(['proxies', id, 'stubb', encodeURIComponent(data.name)]),
+			data
+		);
+	}
+
+	public deleteStubb(id: string, data: StubbDetailsDto): Observable<void> {
+		return this.http.delete<void>(
+			this.getPath(['proxies', id, 'stubb', encodeURIComponent(data.name)])
+		);
 	}
 
 	public toggleService(state: ServerToggleDto): Observable<void> {

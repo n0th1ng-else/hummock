@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { resolve } from 'path';
 import { defaultWiremockVersion, ProxyProvider, firstServerPort } from '../config';
-import { getFilesNumberInDir, getFilesInDir, writeFileOnDisk } from '../server/files';
+import { getFilesNumberInDir, getFilesInDir, writeFileOnDisk, deleteFile } from '../server/files';
 import { StubbDetailsDto } from './types';
 import { cleanupString } from './common';
 
@@ -83,6 +83,10 @@ export class ServerForRecord {
 
 	public updateStubb(stubb: StubbDetailsDto): void {
 		writeFileOnDisk(this.workDir, stubb.name, stubb.content);
+	}
+
+	public deleteStubb(stubbId: string): void {
+		deleteFile(this.workDir, stubbId);
 	}
 }
 

@@ -20,13 +20,22 @@ export function getFilesInDir(dir: string): StubbDetailsDto[] {
 	const files = readdirSync(dir);
 	const sorted = files.sort((a, b) => a.localeCompare(b));
 
-	return sorted.map(file => {
-		const content = readFileSync(resolve(dir, file), 'utf8');
-		return {
-			name: file,
-			content: json5.parse(content)
-		};
-	});
+	return sorted
+		.filter(file => {
+			try {
+				readFileSync(resolve(dir, file), 'utf8');
+				return true;
+			} catch (err) {
+				return false;
+			}
+		})
+		.map(file => {
+			const content = readFileSync(resolve(dir, file), 'utf8');
+			return {
+				name: file,
+				content: json5.parse(content)
+			};
+		});
 }
 
 export function writeFileOnDisk(dir: string, fileName: string, data: StubbFileDto): void {
@@ -39,4 +48,13 @@ export function writeFileOnDisk(dir: string, fileName: string, data: StubbFileDt
 	const contentString = json5.stringify(data, null, 4);
 
 	writeFileSync(filePath, contentString);
+}
+
+export function deleteFile(dir: string, fileName: string): void {
+	if (!existsSync(dir)) {
+		return;
+	}
+
+	const filePath = resolve(dir, fileName);
+	unlinkSync(filePath);
 }

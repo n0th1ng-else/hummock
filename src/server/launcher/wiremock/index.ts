@@ -64,4 +64,8 @@ export class WiremockServer implements LauncherService {
 	public isLaunched(): boolean {
 		throw new Error('Method not implemented.');
 	}
+
+	public deleteStubb(stubbId: string): void {
+		throw new Error('Method not implemented.');
+	}
 }

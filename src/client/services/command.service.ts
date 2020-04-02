@@ -46,6 +46,10 @@ export class CommandService {
 		return this.rest.updateStubb(id, data);
 	}
 
+	public deleteStubb(id: string, data: StubbDetailsDto): Observable<void> {
+		return this.rest.deleteStubb(id, data);
+	}
+
 	public toggleService(state: ServerToggleDto): Observable<void> {
 		return this.rest.toggleService(state);
 	}

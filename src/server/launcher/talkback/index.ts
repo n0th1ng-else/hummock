@@ -82,6 +82,10 @@ export class TalkbackServer implements LauncherService {
 		this.server.updateStubb(stubb);
 	}
 
+	public deleteStubb(stubbId: string): void {
+		this.server.deleteStubb(stubbId);
+	}
+
 	public isLaunched(): boolean {
 		return this.state === ServerForRecordState.RUN;
 	}

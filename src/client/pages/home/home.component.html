@@ -9,6 +9,7 @@
 			<h-server-card
 				*ngFor="let server of servers.items"
 				[server]="server"
+				[stubbCount]="getStubbCount(server)"
 				[form]="serversForm"
 			></h-server-card>
 		</div>

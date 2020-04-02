@@ -29,4 +29,5 @@ export interface LauncherService {
 	getListDto(): ServerListDetailsDto;
 	getDto(): ServerDetailsDto;
 	updateStubb(stubb: StubbDetailsDto): void;
+	deleteStubb(stubbId: string): void;
 }

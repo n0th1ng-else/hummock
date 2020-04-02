@@ -31,7 +31,6 @@ import { switchMap, tap, catchError, filter, flatMap } from 'rxjs/operators';
 })
 export class HostComponent implements OnDestroy {
 	public server: ServerModel;
-	public selectedStubb?: StubbDetailsDto;
 	public updater: number;
 	public hasNewData = false;
 
@@ -51,20 +50,19 @@ export class HostComponent implements OnDestroy {
 		this.updater = window.setInterval(() => this.updateData(), 1000);
 	}
 
-	public ngOnDestroy() {
+	public ngOnDestroy(): void {
 		this.stopAutoRefresh();
 	}
 
-	public selectStubb(stubb: StubbDetailsDto) {
-		this.selectedStubb = stubb;
+	public showStubbResponseBody(stubb: StubbDetailsDto): void {
+		this.openBodyEditor(stubb);
 	}
 
-	public showStubbResponseBody() {
-		if (!this.selectedStubb) {
-			return;
-		}
-
-		this.openBodyEditor(this.selectedStubb);
+	public deleteStubb(stubb: StubbDetailsDto): void {
+		this.api.deleteStubb(this.id, stubb).subscribe(() => {
+			this.updateData(true);
+			this.notification.showMessage('Stubb was deleted');
+		});
 	}
 
 	public isLaunched(): boolean {
@@ -99,7 +97,7 @@ export class HostComponent implements OnDestroy {
 			});
 	}
 
-	private openBodyEditor(stubb: StubbDetailsDto) {
+	private openBodyEditor(stubb: StubbDetailsDto): void {
 		this.dialog
 			.open(DialogStubbBodyComponent, {
 				width: '50%',
@@ -123,11 +121,11 @@ export class HostComponent implements OnDestroy {
 			});
 	}
 
-	public isOptionsRequest(stubb: StubbDetailsDto) {
+	public isOptionsRequest(stubb: StubbDetailsDto): boolean {
 		return stubb.content.req.method === 'OPTIONS';
 	}
 
-	private updateData(shouldRefresh = false) {
+	private updateData(shouldRefresh = false): void {
 		this.api
 			.getProxy(this.id)
 			.pipe(
@@ -155,7 +153,7 @@ export class HostComponent implements OnDestroy {
 			});
 	}
 
-	private stopAutoRefresh() {
+	private stopAutoRefresh(): void {
 		if (this.updater) {
 			window.clearInterval(this.updater);
 			this.updater = 0;

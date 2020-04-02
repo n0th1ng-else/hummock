@@ -17,6 +17,7 @@ import styles from './server-card.component.less';
 })
 export class ServerCardComponent {
 	@Input() public server: ServerModel;
+	@Input() public stubbCount: number;
 	@Input() public form: FormGroup;
 
 	constructor(
