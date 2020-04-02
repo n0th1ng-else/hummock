@@ -73,20 +73,22 @@ export class ServerForRecord {
 		this.updateStubbCount();
 	}
 
-	public updateStubbCount(): void {
-		this.stubbs = getFilesNumberInDir(this.workDir);
+	public updateStubbCount(): Promise<void> {
+		return getFilesNumberInDir(this.workDir).then(stubbs => {
+			this.stubbs = stubbs;
+		});
 	}
 
-	public getStubbData(): StubbDetailsDto[] {
+	public getStubbData(): Promise<StubbDetailsDto[]> {
 		return getFilesInDir(this.workDir);
 	}
 
-	public updateStubb(stubb: StubbDetailsDto): void {
-		writeFileOnDisk(this.workDir, stubb.name, stubb.content);
+	public updateStubb(stubb: StubbDetailsDto): Promise<void> {
+		return writeFileOnDisk(this.workDir, stubb.name, stubb.content);
 	}
 
-	public deleteStubb(stubbId: string): void {
-		deleteFile(this.workDir, stubbId);
+	public deleteStubb(stubbId: string): Promise<void> {
+		return deleteFile(this.workDir, stubbId);
 	}
 }
 

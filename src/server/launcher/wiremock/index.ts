@@ -49,15 +49,15 @@ export class WiremockServer implements LauncherService {
 		throw new Error('Method not implemented.');
 	}
 
-	public getDto(): ServerDetailsDto {
+	public getDto(): Promise<ServerDetailsDto> {
 		throw new Error('Method not implemented.');
 	}
 
-	public getListDto(): ServerListDetailsDto {
+	public getListDto(): Promise<ServerListDetailsDto> {
 		throw new Error('Method not implemented.');
 	}
 
-	public updateStubb(stubb: StubbDetailsDto): void {
+	public updateStubb(stubb: StubbDetailsDto): Promise<void> {
 		throw new Error('Method not implemented.');
 	}
 
@@ -65,7 +65,7 @@ export class WiremockServer implements LauncherService {
 		throw new Error('Method not implemented.');
 	}
 
-	public deleteStubb(stubbId: string): void {
+	public deleteStubb(stubbId: string): Promise<void> {
 		throw new Error('Method not implemented.');
 	}
 }

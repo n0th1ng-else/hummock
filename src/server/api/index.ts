@@ -1,4 +1,4 @@
-import { Application, Request, Response, NextFunction, Router } from 'express';
+import { Application, Request, Response, Router } from 'express';
 import { HummockConfig } from '../../models/config';
 import { Logger, pGreen, pYellow } from '../log';
 import { getLaunchers, LauncherService } from '../launcher';
@@ -28,18 +28,25 @@ class ApiRouter {
 	}
 
 	private handleRoutes() {
-		this.router.get('/config', (req: Request, res: Response, next: NextFunction) => {
+		this.router.get('/config', (req: Request, res: Response) => {
 			res.status(200).send(this.config);
 		});
 
-		this.router.get('/proxies', (req: Request, res: Response, next: NextFunction) => {
-			res.status(200).send({
-				total: this.config.servers.length,
-				items: this.launchers.map(launcher => launcher.getListDto())
-			});
+		this.router.get('/proxies', (req: Request, res: Response) => {
+			Promise.all(this.launchers.map(launcher => launcher.getListDto()))
+				.then(items => {
+					res.status(200).send({
+						total: this.config.servers.length,
+						items
+					});
+				})
+				.catch(err => {
+					logger.error(err);
+					res.status(500).send({ message: 'Something went wrong' });
+				});
 		});
 
-		this.router.get('/proxies/:proxyId', (req: Request, res: Response, next: NextFunction) => {
+		this.router.get('/proxies/:proxyId', (req: Request, res: Response) => {
 			const id = req.params.proxyId;
 			const launcher = this.launchers.find(instance => instance.server.id === id);
 
@@ -48,64 +55,66 @@ class ApiRouter {
 				return;
 			}
 
-			res.status(200).send(launcher.getDto());
+			launcher
+				.getDto()
+				.then(dto => {
+					res.status(200).send(dto);
+				})
+				.catch(err => {
+					logger.error(err);
+					res.status(500).send({ message: 'Something went wrong' });
+				});
 		});
 
-		this.router.put(
-			'/proxies/:proxyId/stubb/:stubbId',
-			(req: Request, res: Response, next: NextFunction) => {
-				const id = req.params.proxyId;
-				const stubbData: StubbDetailsDto = req.body;
+		this.router.put('/proxies/:proxyId/stubb/:stubbId', (req: Request, res: Response) => {
+			const id = req.params.proxyId;
+			const stubbData: StubbDetailsDto = req.body;
 
-				const launcher = this.launchers.find(instance => instance.server.id === id);
+			const launcher = this.launchers.find(instance => instance.server.id === id);
 
-				if (!launcher) {
-					res.status(404).send({ message: `Host with id=${id} not found` });
-					return;
-				}
-
-				const wasLaunched = launcher.isLaunched();
-				launcher
-					.stop()
-					.then(() => launcher.updateStubb(stubbData))
-					.then(() => wasLaunched && launcher.start())
-					.then(() => res.status(200).send({}))
-					.catch(err => {
-						logger.error(err);
-						res
-							.status(400)
-							.send({ message: `Unable to update stubb ${stubbData.name} for id ${id}` });
-					});
+			if (!launcher) {
+				res.status(404).send({ message: `Host with id=${id} not found` });
+				return;
 			}
-		);
 
-		this.router.delete(
-			'/proxies/:proxyId/stubb/:stubbId',
-			(req: Request, res: Response, next: NextFunction) => {
-				const id = req.params.proxyId;
-				const stubbId = decodeURIComponent(req.params.stubbId);
+			const wasLaunched = launcher.isLaunched();
+			launcher
+				.stop()
+				.then(() => launcher.updateStubb(stubbData))
+				.then(() => wasLaunched && launcher.start())
+				.then(() => res.status(200).send({}))
+				.catch(err => {
+					logger.error(err);
+					res
+						.status(500)
+						.send({ message: `Unable to update stubb ${stubbData.name} for id ${id}` });
+				});
+		});
 
-				const launcher = this.launchers.find(instance => instance.server.id === id);
+		this.router.delete('/proxies/:proxyId/stubb/:stubbId', (req: Request, res: Response) => {
+			const id = req.params.proxyId;
+			const stubbId = decodeURIComponent(req.params.stubbId);
 
-				if (!launcher) {
-					res.status(404).send({ message: `Host with id=${id} not found` });
-					return;
-				}
+			const launcher = this.launchers.find(instance => instance.server.id === id);
 
-				const wasLaunched = launcher.isLaunched();
-				launcher
-					.stop()
-					.then(() => launcher.deleteStubb(stubbId))
-					.then(() => wasLaunched && launcher.start())
-					.then(() => res.status(200).send({}))
-					.catch(err => {
-						logger.error(err);
-						res.status(400).send({ message: `Unable to update stubb ${stubbId} for id ${id}` });
-					});
+			if (!launcher) {
+				res.status(404).send({ message: `Host with id=${id} not found` });
+				return;
 			}
-		);
 
-		this.router.post('/proxies', (req: Request, res: Response, next: NextFunction) => {
+			const wasLaunched = launcher.isLaunched();
+			launcher
+				.stop()
+				.then(() => launcher.deleteStubb(stubbId))
+				.then(() => wasLaunched && launcher.start())
+				.then(() => res.status(200).send({}))
+				.catch(err => {
+					logger.error(err);
+					res.status(500).send({ message: `Unable to delete stubb ${stubbId} for id ${id}` });
+				});
+		});
+
+		this.router.post('/proxies', (req: Request, res: Response) => {
 			const toggleData: ServerToggleDto = req.body;
 
 			logger.info(!toggleData.run ? 'Stopping mock servers' : 'Starting mock servers');
@@ -128,7 +137,7 @@ class ApiRouter {
 				})
 				.catch(err => {
 					logger.error(err);
-					res.status(500).send({});
+					res.status(500).send({ message: 'Something went wrong' });
 				});
 		});
 
