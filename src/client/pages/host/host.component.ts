@@ -54,6 +54,11 @@ export class HostComponent implements OnDestroy {
 		this.stopAutoRefresh();
 	}
 
+	public copyListenerUrl(): void {
+		copyToClipboard(this.server.mockUrl);
+		this.notification.showMessage('Copied to clipboard 🍕');
+	}
+
 	public showStubbResponseBody(stubb: StubbDetailsDto): void {
 		this.openBodyEditor(stubb);
 	}

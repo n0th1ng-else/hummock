@@ -4,7 +4,14 @@
 			<mat-list>
 				<mat-list-item> <b>Origin</b>: {{ server.host }} </mat-list-item>
 				<mat-divider></mat-divider>
-				<mat-list-item> <b>Listener</b>: {{ server.mockUrl }} </mat-list-item>
+				<mat-list-item>
+					<div class="menu-item-btn">
+						<div><b>Listener</b>: {{ server.mockUrl }}</div>
+						<div>
+							<button mat-button color="accent" (click)="copyListenerUrl()">Copy URL</button>
+						</div>
+					</div>
+				</mat-list-item>
 				<mat-divider></mat-divider>
 				<mat-list-item>
 					<div class="menu-item-btn">
