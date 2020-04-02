@@ -1,5 +1,11 @@
 import * as json5 from 'json5';
-import { Component, ChangeDetectionStrategy, NgModule, Inject } from '@angular/core';
+import {
+	Component,
+	ChangeDetectionStrategy,
+	NgModule,
+	Inject,
+	ViewEncapsulation
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
@@ -13,6 +19,7 @@ import { NotificationService } from '../../services/notification.service';
 	selector: 'h-dialog-stubb-body',
 	template: require('./dialog-stubb-body.component.html'),
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	encapsulation: ViewEncapsulation.None,
 	styles: [styles]
 })
 export class DialogStubbBodyComponent {
