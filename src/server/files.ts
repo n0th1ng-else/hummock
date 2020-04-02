@@ -35,10 +35,8 @@ export function writeFileOnDisk(dir: string, fileName: string, data: StubbFileDt
 	}
 
 	const filePath = resolve(dir, fileName);
-	if (existsSync(filePath)) {
-		unlinkSync(filePath);
-	}
 
-	const contentString = json5.stringify(data);
-	writeFileSync(filePath, contentString, 'utf8');
+	const contentString = json5.stringify(data, null, 4);
+
+	writeFileSync(filePath, contentString);
 }

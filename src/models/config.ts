@@ -1,9 +1,9 @@
 import { nanoid } from 'nanoid';
 import { resolve } from 'path';
-import { readdirSync, existsSync } from 'fs';
 import { defaultWiremockVersion, ProxyProvider, firstServerPort } from '../config';
 import { getFilesNumberInDir, getFilesInDir, writeFileOnDisk } from '../server/files';
 import { StubbDetailsDto } from './types';
+import { cleanupString } from './common';
 
 export interface HummockConfigDto {
 	provider?: ProxyProvider;
@@ -68,14 +68,7 @@ export class ServerForRecord {
 	public stubbs = 0;
 
 	constructor(public readonly host: string, public readonly port: number, workingDirRoot: string) {
-		const hostEscaped = host
-			.replace(/\./g, '')
-			.replace(/\/\//g, '')
-			.replace(/\:/g, '')
-			.replace(/\:/g, '')
-			.replace(/\#/g, '')
-			.replace(/\?/g, '')
-			.replace(/\//g, '');
+		const hostEscaped = cleanupString(host);
 		this.workDir = resolve(workingDirRoot, hostEscaped);
 		this.updateStubbCount();
 	}

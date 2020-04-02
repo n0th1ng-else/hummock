@@ -123,6 +123,10 @@ export class HostComponent implements OnDestroy {
 			});
 	}
 
+	public isOptionsRequest(stubb: StubbDetailsDto) {
+		return stubb.content.req.method === 'OPTIONS';
+	}
+
 	private updateData(shouldRefresh = false) {
 		this.api
 			.getProxy(this.id)

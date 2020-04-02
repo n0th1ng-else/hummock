@@ -1,4 +1,5 @@
 import talkback from 'talkback/es6';
+import Tape from 'talkback/tape';
 import { LauncherService } from '..';
 import { ServerForRecord } from '../../../models/config';
 import {
@@ -7,6 +8,7 @@ import {
 	ServerDetailsDto,
 	StubbDetailsDto
 } from '../../../models/types';
+import { cleanupString } from '../../../models/common';
 
 export class TalkbackServer implements LauncherService {
 	private stateParam = ServerForRecordState.IDLE;
@@ -89,7 +91,12 @@ export class TalkbackServer implements LauncherService {
 			host: this.server.host,
 			record: talkback.Options.RecordMode.NEW,
 			port: this.server.port,
-			path: this.server.workDir
+			path: this.server.workDir,
+			tapeNameGenerator
 		});
 	}
+}
+
+function tapeNameGenerator(tapeNumber: number, tape: Tape): string {
+	return `${tape.req.method}-${cleanupString(tape.req.url)}`;
 }

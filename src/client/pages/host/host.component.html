@@ -37,10 +37,17 @@
 		</div>
 		<div class="host-stubbs">
 			<mat-accordion class="example-headers-align">
-				<mat-expansion-panel (opened)="selectStubb(stubb)" *ngFor="let stubb of server.stubbData">
+				<mat-expansion-panel
+					(opened)="selectStubb(stubb)"
+					[ngClass]="{ 'is-options': isOptionsRequest(stubb) }"
+					*ngFor="let stubb of server.stubbData"
+				>
 					<mat-expansion-panel-header>
 						<mat-panel-title>
-							<mat-icon>ac_unit</mat-icon>
+							<mat-icon>
+								<ng-container *ngIf="!isOptionsRequest(stubb)">ac_unit</ng-container>
+								<ng-container *ngIf="isOptionsRequest(stubb)">360</ng-container>
+							</mat-icon>
 							{{ stubb.name }}
 						</mat-panel-title>
 						<mat-panel-description>

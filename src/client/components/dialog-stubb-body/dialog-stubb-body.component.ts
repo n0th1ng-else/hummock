@@ -40,8 +40,8 @@ export class DialogStubbBodyComponent {
 		}
 
 		try {
-			json5.parse(text);
-			this.dialogRef.close(text);
+			const data = json5.parse(text);
+			this.dialogRef.close(data);
 		} catch (err) {
 			this.notification.showMessage('Provided JSON is invalid 🛑');
 			console.warn(err);
