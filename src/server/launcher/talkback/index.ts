@@ -47,50 +47,55 @@ export class TalkbackServer implements LauncherService {
 			});
 		}).then(() => {
 			this.setupMock();
-			this.server.updateStubbCount();
+			return this.server.updateStubbCount();
 		});
 	}
 
-	public getDto(): ServerDetailsDto {
-		this.server.updateStubbCount();
-		return {
-			state: this.state,
-			id: this.server.id,
-			host: this.server.host,
-			port: this.server.port,
-			stubbs: {
-				total: this.server.stubbs,
-				items: this.server.getStubbData()
-			}
-		};
+	public getDto(): Promise<ServerDetailsDto> {
+		return this.server
+			.updateStubbCount()
+			.then(() => this.server.getStubbData())
+			.then(stubbs => {
+				return {
+					state: this.state,
+					id: this.server.id,
+					host: this.server.host,
+					port: this.server.port,
+					stubbs: {
+						total: this.server.stubbs,
+						items: stubbs
+					}
+				};
+			});
 	}
 
-	public getListDto(): ServerListDetailsDto {
-		this.server.updateStubbCount();
-		return {
-			state: this.state,
-			id: this.server.id,
-			host: this.server.host,
-			port: this.server.port,
-			stubbs: {
-				total: this.server.stubbs
-			}
-		};
+	public getListDto(): Promise<ServerListDetailsDto> {
+		return this.server.updateStubbCount().then(() => {
+			return {
+				state: this.state,
+				id: this.server.id,
+				host: this.server.host,
+				port: this.server.port,
+				stubbs: {
+					total: this.server.stubbs
+				}
+			};
+		});
 	}
 
-	public updateStubb(stubb: StubbDetailsDto) {
-		this.server.updateStubb(stubb);
+	public updateStubb(stubb: StubbDetailsDto): Promise<void> {
+		return this.server.updateStubb(stubb);
 	}
 
-	public deleteStubb(stubbId: string): void {
-		this.server.deleteStubb(stubbId);
+	public deleteStubb(stubbId: string): Promise<void> {
+		return this.server.deleteStubb(stubbId);
 	}
 
 	public isLaunched(): boolean {
 		return this.state === ServerForRecordState.RUN;
 	}
 
-	private setupMock() {
+	private setupMock(): void {
 		this.instance = talkback({
 			host: this.server.host,
 			record: talkback.Options.RecordMode.NEW,

@@ -26,8 +26,8 @@ export interface LauncherService {
 	start(): Promise<void>;
 	stop(): Promise<void>;
 	isLaunched(): boolean;
-	getListDto(): ServerListDetailsDto;
-	getDto(): ServerDetailsDto;
-	updateStubb(stubb: StubbDetailsDto): void;
-	deleteStubb(stubbId: string): void;
+	getListDto(): Promise<ServerListDetailsDto>;
+	getDto(): Promise<ServerDetailsDto>;
+	updateStubb(stubb: StubbDetailsDto): Promise<void>;
+	deleteStubb(stubbId: string): Promise<void>;
 }

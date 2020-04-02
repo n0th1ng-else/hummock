@@ -56,19 +56,21 @@
 							</mat-icon>
 							{{ stubb.name }}
 						</mat-panel-title>
-						<mat-panel-description>
-							{{ stubb.content.req.url }}
-						</mat-panel-description>
 					</mat-expansion-panel-header>
 
 					<mat-list>
-						<mat-list-item>
-							<b>Request</b>: {{ stubb.content.meta.host }}{{ stubb.content.req.url }}
-						</mat-list-item>
+						<mat-list-item> <b>Request</b>: {{ stubb.content.req.url }} </mat-list-item>
 						<mat-divider></mat-divider>
 						<mat-list-item> <b>Method</b>: {{ stubb.content.req.method }} </mat-list-item>
 						<mat-divider></mat-divider>
-						<mat-list-item> <b>Status</b>: {{ stubb.content.res.status }} </mat-list-item>
+						<mat-list-item>
+							<div class="menu-item-btn">
+								<div><b>Status</b>: {{ stubb.content.res.status }}</div>
+								<div>
+									<button mat-button (click)="changeStubbStatus(stubb)">Change</button>
+								</div>
+							</div>
+						</mat-list-item>
 					</mat-list>
 
 					<mat-action-row>
