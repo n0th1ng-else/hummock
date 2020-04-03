@@ -1,6 +1,6 @@
 {
   "name": "hummock",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Caching responses from real api and use it as the stubbed data (Powered by talkback)",
   "main": "index.js",
   "scripts": {
