@@ -17,7 +17,7 @@ export async function downloadWiremock(config: WiremockConfig, workDir: string):
 	return isExistsByPath(workDir)
 		.then(isExists => {
 			if (!isExists) {
-				logger.info(pGreen('Working dir does not exists. Creating it...'));
+				logger.info(pGreen('Working dir does not exists. Creating it ✨'));
 				return makeDirByPath(workDir);
 			}
 		})
@@ -25,7 +25,7 @@ export async function downloadWiremock(config: WiremockConfig, workDir: string):
 			const wiremockUrl = `${wiremockDownloadUrl}/${config.version}/${wiremockJarName(
 				config.version
 			)}`;
-			logger.info(pGreen('Downloading Wiremock standalone'));
+			logger.info(pGreen('Downloading Wiremock standalone ⌚️'));
 			return downloadFile(wiremockUrl, workDir, wiremockJarName(config.version));
 		})
 		.catch(err => {

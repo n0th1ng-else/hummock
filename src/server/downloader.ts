@@ -12,11 +12,11 @@ export async function downloadFile(
 ): Promise<void> {
 	return isExistsByPath(localFilePath, localFileName).then(isExists => {
 		if (isExists) {
-			logger.info(pGreen('File exists, skipping download 👌'));
+			logger.info(pGreen('File exists, skipping download ✨'));
 			return;
 		}
 
-		logger.info(pGreen('Starting file download...⏱ '), url);
+		logger.info(pGreen('Starting file download ⏱ '), url);
 		return createFileAndDownload(url, localFilePath, localFileName);
 	});
 }

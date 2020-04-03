@@ -30,13 +30,13 @@ export function run(options: string[]): Promise<number> {
 		}
 
 		if (!commands[command]) {
-			logger.error(`Unknown command "hummock ${command}".`);
+			logger.error(`Unknown command "hummock ${command}"`);
 			logger.info(`Available commands are: \n  ${Object.keys(commands).join('\n  ')}`);
 			return Promise.reject();
 		}
 
 		// Spawn process
-		logger.info(`Launching command "hummock ${command}"`);
+		logger.info(`Launching command "hummock ${command}" ✨`);
 		return runCommand(paths.commands, commands[command], nodeArgs, commandArgs);
 	});
 }
@@ -49,7 +49,7 @@ function runCommand(
 ): Promise<number> {
 	return isExistsByPath(filePath, fileName).then(isExists => {
 		if (!isExists) {
-			logger.error(`File ${fileName} does not exists. Terminating...`);
+			logger.error(`File ${fileName} does not exists. Terminating 🌑`);
 			return Promise.reject();
 		}
 
@@ -61,7 +61,7 @@ function runCommand(
 			commandArgs
 		);
 
-		logger.info('Spawning process');
+		logger.info('Spawning process 🚀');
 		const result = sync('node', processArgs, { stdio: 'inherit' });
 
 		if (result.signal) {
