@@ -1,7 +1,12 @@
 import { nanoid } from 'nanoid';
-import { resolve } from 'path';
 import { defaultWiremockVersion, ProxyProvider, firstServerPort } from '../config';
-import { getFilesNumberInDir, getFilesInDir, writeFileOnDisk, deleteFile } from '../server/files';
+import {
+	getFilesNumberInDir,
+	getFilesInDir,
+	writeFileOnDisk,
+	deleteFile,
+	getAbsolutePath
+} from '../server/files';
 import { StubbDetailsDto } from './types';
 import { cleanupString } from './common';
 
@@ -69,7 +74,7 @@ export class ServerForRecord {
 
 	constructor(public readonly host: string, public readonly port: number, workingDirRoot: string) {
 		const hostEscaped = cleanupString(host);
-		this.workDir = resolve(workingDirRoot, hostEscaped);
+		this.workDir = getAbsolutePath(workingDirRoot, hostEscaped);
 		this.updateStubbCount();
 	}
 

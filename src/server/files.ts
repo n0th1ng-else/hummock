@@ -1,9 +1,65 @@
 import * as json5 from 'json5';
 import { resolve } from 'path';
-import { unlink, readdir, stat, writeFile, readFile } from 'fs';
+import {
+	unlink,
+	readdir,
+	stat,
+	writeFile,
+	readFile,
+	mkdir,
+	createWriteStream,
+	WriteStream
+} from 'fs';
 import { StubbDetailsDto, StubbFileDto } from '../models/types';
 
-function isExistsByPath(dir: string, fileName?: string): Promise<boolean> {
+export function getAbsolutePath(...parts: string[]): string {
+	return resolve(...parts.filter(part => !!part));
+}
+
+export function readDirByPath(dir: string): Promise<string[]> {
+	return new Promise<string[]>((resolve, reject) =>
+		readdir(dir, (err, files) => (err ? reject(err) : resolve(files)))
+	);
+}
+
+export function deleteFileByPath(dir: string, fileName: string): Promise<void> {
+	const filePath = resolve(dir, fileName);
+	return new Promise((resolve, reject) => {
+		unlink(filePath, err => (err ? reject(err) : resolve()));
+	});
+}
+
+export function createFileStreamByPath(dir: string, fileName: string): WriteStream {
+	const filePath = resolve(dir, fileName);
+	return createWriteStream(filePath);
+}
+
+export function writeFileByPath<Data>(dir: string, fileName: string, content: Data): Promise<void> {
+	const filePath = resolve(dir, fileName);
+	return new Promise((resolve, reject) => {
+		writeFile(filePath, content, err => (err ? reject(err) : resolve()));
+	});
+}
+
+export function makeDirByPath(dir: string): Promise<void> {
+	return new Promise((resolve, reject) => {
+		mkdir(dir, err => (err ? reject(err) : resolve()));
+	});
+}
+
+export function readFileByPath(
+	dir: string,
+	fileName: string
+): Promise<{ name: string; data: string }> {
+	const filePath = resolve(dir, fileName);
+	return new Promise((resolve, reject) => {
+		readFile(filePath, 'utf8', (err, data) =>
+			err ? reject(err) : resolve({ name: fileName, data })
+		);
+	});
+}
+
+export function isExistsByPath(dir: string, fileName?: string): Promise<boolean> {
 	const path = fileName ? resolve(dir, fileName) : dir;
 	return new Promise<boolean>((resolve, reject) => {
 		stat(path, err => {
@@ -13,35 +69,6 @@ function isExistsByPath(dir: string, fileName?: string): Promise<boolean> {
 
 			return err ? reject(err) : resolve(true);
 		});
-	});
-}
-
-function readDirByPath(dir: string): Promise<string[]> {
-	return new Promise<string[]>((resolve, reject) =>
-		readdir(dir, (err, files) => (err ? reject(err) : resolve(files)))
-	);
-}
-
-function deleteFileByPath(dir: string, fileName: string): Promise<void> {
-	const filePath = resolve(dir, fileName);
-	return new Promise((resolve, reject) => {
-		unlink(filePath, err => (err ? reject(err) : resolve()));
-	});
-}
-
-function writeFileByPath<Data>(dir: string, fileName: string, content: Data): Promise<void> {
-	const filePath = resolve(dir, fileName);
-	return new Promise((resolve, reject) => {
-		writeFile(filePath, content, err => (err ? reject(err) : resolve()));
-	});
-}
-
-function readFileByPath(dir: string, fileName: string): Promise<{ name: string; data: string }> {
-	const filePath = resolve(dir, fileName);
-	return new Promise((resolve, reject) => {
-		readFile(filePath, 'utf8', (err, data) =>
-			err ? reject(err) : resolve({ name: fileName, data })
-		);
 	});
 }
 

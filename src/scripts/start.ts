@@ -8,7 +8,7 @@ const logger = new Logger('launcher');
 
 export async function run(): Promise<void> {
 	logger.info('Validating config... 💥');
-	const config = validate(defaultConfigPath, workDir);
+	const config = await validate(defaultConfigPath, workDir);
 
 	if (config.provider === ProxyProvider.WIREMOCK) {
 		await downloadWiremock(config.wiremock, workDir);
