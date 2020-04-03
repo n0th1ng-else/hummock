@@ -11,26 +11,38 @@ import { HummockConfig } from '../../models/config';
 const logger = new Logger('express');
 
 export async function startServer(config: HummockConfig, port = 3000): Promise<void> {
-	return new Promise(resolve => {
-		const app: express.Application = express();
-		app.use(express.json());
-		app.set('etag', false);
-		app.use((req, res, next) => {
-			res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-			next();
-		});
+	const app = initServer();
+	return pickApiRoutes(app, config).then(() => {
+		if (config.enableGui) {
+			pickGui(app);
+		}
 
-		// TODO implement production mode
-		const compiler = webpack(getConfig(false));
-
-		pickApiRoutes(app, config);
-		app.use(webpackHistoryApiFallback());
-		app.use(webpackDevMiddleware(compiler, getDevServerConfig()));
-		app.use(webpackHotMiddleware(compiler));
-
-		app.listen(port, () => {
-			logger.info(`${pGreen('Server started.')} Go visit http://localhost:${port} 🚀`);
-			resolve();
+		return new Promise(resolve => {
+			app.listen(port, () => {
+				logger.info(`${pGreen('Server started.')} Go visit http://localhost:${port} 🚀`);
+				resolve();
+			});
 		});
 	});
+}
+
+function initServer(): express.Application {
+	const app: express.Application = express();
+	app.use(express.json());
+	app.set('etag', false);
+	app.use((req, res, next) => {
+		res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+		next();
+	});
+	return app;
+}
+
+function pickGui(app: express.Application): express.Application {
+	// TODO implement production mode
+	const isProductionMode = false;
+	const compiler = webpack(getConfig(isProductionMode));
+	app.use(webpackHistoryApiFallback());
+	app.use(webpackDevMiddleware(compiler, getDevServerConfig()));
+	app.use(webpackHotMiddleware(compiler));
+	return app;
 }

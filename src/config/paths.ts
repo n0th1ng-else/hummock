@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { getAbsolutePath } from '../server/files';
 
 export class AppPaths {
 	public readonly root: string;
@@ -8,23 +8,25 @@ export class AppPaths {
 	public readonly assets: AppPathsAssets;
 	public readonly files: AppPathsFiles;
 	public readonly commands: string;
+	public readonly cliBin: string;
 
 	private readonly dir = __dirname;
 
 	constructor() {
-		this.root = resolve(this.dir, '../..');
-		this.release = resolve(this.root, 'release');
-		this.src = resolve(this.root, 'src');
-		this.commands = resolve(this.src, 'scripts');
+		this.root = getAbsolutePath(this.dir, '..', '..');
+		this.release = getAbsolutePath(this.root, 'release');
+		this.src = getAbsolutePath(this.root, 'src');
+		this.commands = getAbsolutePath(this.src, 'scripts');
+		this.cliBin = getAbsolutePath(this.root, 'index.js');
 
-		const clientPath = resolve(this.src, 'client');
+		const clientPath = getAbsolutePath(this.src, 'client');
 		this.modules = new AppPathsModules(this.root);
 		this.assets = new AppPathsAssets(clientPath);
 		this.files = new AppPathsFiles(clientPath, this.release);
 	}
 
 	public getCommand(name: string): string {
-		return resolve(this.commands, name);
+		return getAbsolutePath(this.commands, name);
 	}
 }
 
@@ -34,9 +36,9 @@ class AppPathsModules {
 	public readonly hmr: string;
 
 	constructor(root: string) {
-		this.zone = resolve(root, 'node_modules', 'zone.js', 'dist', 'zone');
-		this.reflectMetadata = resolve(root, 'node_modules', 'reflect-metadata');
-		this.hmr = resolve(root, 'node_modules', 'webpack-hot-middleware', 'client');
+		this.zone = getAbsolutePath(root, 'node_modules', 'zone.js', 'dist', 'zone');
+		this.reflectMetadata = getAbsolutePath(root, 'node_modules', 'reflect-metadata');
+		this.hmr = getAbsolutePath(root, 'node_modules', 'webpack-hot-middleware', 'client');
 	}
 }
 
@@ -45,12 +47,12 @@ class AppPathsAssets {
 	public readonly icons: string;
 
 	constructor(publicPath: string) {
-		this.images = resolve(publicPath, 'assets', 'images');
-		this.icons = resolve(publicPath, 'assets', 'icons');
+		this.images = getAbsolutePath(publicPath, 'assets', 'images');
+		this.icons = getAbsolutePath(publicPath, 'assets', 'icons');
 	}
 
 	public getIcon(name: string): string {
-		return resolve(this.icons, name);
+		return getAbsolutePath(this.icons, name);
 	}
 }
 
@@ -60,8 +62,8 @@ class AppPathsFiles {
 	public readonly htmlResult: string;
 
 	constructor(clientPath: string, releasePath: string) {
-		this.app = resolve(clientPath, 'appLoader.ts');
-		this.htmlTemplate = resolve(clientPath, 'index.html');
-		this.htmlResult = resolve(releasePath, 'index.html');
+		this.app = getAbsolutePath(clientPath, 'appLoader.ts');
+		this.htmlTemplate = getAbsolutePath(clientPath, 'index.html');
+		this.htmlResult = getAbsolutePath(releasePath, 'index.html');
 	}
 }

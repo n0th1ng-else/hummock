@@ -1,0 +1,59 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "ProxyProvider": {
+            "enum": [
+                "talkback",
+                "wiremock"
+            ],
+            "type": "string"
+        },
+        "ServerForRecordDto": {
+            "properties": {
+                "host": {
+                    "description": "Remote server host which should be recorded (absolute url which must start with http:// of https://)",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "WiremockConfigDto": {
+            "properties": {
+                "version": {
+                    "default": "2.26.3",
+                    "description": "Sets wiremock version",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "properties": {
+        "autostart": {
+            "default": false,
+            "description": "Start all proxies while app launches",
+            "type": "boolean"
+        },
+        "gui": {
+            "default": true,
+            "description": "Enable gui interface",
+            "type": "boolean"
+        },
+        "provider": {
+            "$ref": "#/definitions/ProxyProvider",
+            "default": "talkback",
+            "description": "Sets which provider to use",
+            "type": "string"
+        },
+        "recordFrom": {
+            "items": {
+                "$ref": "#/definitions/ServerForRecordDto"
+            },
+            "type": "array"
+        },
+        "wiremock": {
+            "$ref": "#/definitions/WiremockConfigDto"
+        }
+    },
+    "type": "object"
+}

@@ -1,4 +1,4 @@
-import { Application, Request, Response, Router } from 'express';
+import { Application as ExpressApp, Request, Response, Router } from 'express';
 import { HummockConfig } from '../../models/config';
 import { Logger, pGreen, pYellow } from '../log';
 import { getLaunchers, LauncherService } from '../launcher';
@@ -6,11 +6,11 @@ import { ServerToggleDto, StubbDetailsDto } from '../../models/types';
 
 const logger = new Logger('api');
 
-export function pickApiRoutes(app: Application, config: HummockConfig): ApiRouter {
+export function pickApiRoutes(app: ExpressApp, config: HummockConfig): Promise<ApiRouter> {
 	const apiRouter = new ApiRouter(config);
 	app.use('/api/v0', apiRouter.router);
 	app.all('/api/*', showNotFound);
-	return apiRouter;
+	return config.autostart ? apiRouter.startAll().then(() => apiRouter) : Promise.resolve(apiRouter);
 }
 
 class ApiRouter {
@@ -25,6 +25,10 @@ class ApiRouter {
 
 	public stopAll(): Promise<void> {
 		return Promise.all(this.launchers.map(launcher => launcher.stop())).then(() => {});
+	}
+
+	public startAll(): Promise<void> {
+		return Promise.all(this.launchers.map(launcher => launcher.start())).then(() => {});
 	}
 
 	private handleRoutes() {

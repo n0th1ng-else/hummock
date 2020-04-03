@@ -1,4 +1,4 @@
-import { defaultHost } from '../../config';
+import { defaultHost } from '../../config/both';
 import { ServerForRecordState, StubbDetailsDto } from '../../models/types';
 
 export class ServerModel {

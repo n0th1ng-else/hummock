@@ -1,6 +1,10 @@
-import { resolve } from 'path';
+import { getAbsolutePath } from '../server/files';
 
-export const defaultConfigPath = resolve(__dirname, '../../hummock.json');
+export const defaultConfigPath = getAbsolutePath(__dirname, '..', '..');
+
+export const configName = 'hummock.json';
+
+export const configSchemaName = 'hummock.json.schema';
 
 export const defaultWiremockVersion = '2.26.3';
 
@@ -9,7 +13,7 @@ export const wiremockDownloadUrl =
 
 export const wiremockJarName = (version: string) => `wiremock-standalone-${version}.jar`;
 
-export const workDir = resolve(__dirname, '../../workdir');
+export const workDir = getAbsolutePath(__dirname, '..', '..', 'workdir');
 
 export enum ProxyProvider {
 	TALKBACK = 'talkback',
@@ -17,5 +21,3 @@ export enum ProxyProvider {
 }
 
 export const firstServerPort = 6000;
-
-export const defaultHost = 'http://localhost';

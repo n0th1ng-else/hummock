@@ -1,5 +1,3 @@
-import { existsSync, mkdirSync } from 'fs';
-import { resolve } from 'path';
 import { Logger, pGreen, pRed } from '../../log';
 import { WiremockConfig, ServerForRecord } from '../../../models/config';
 import { wiremockDownloadUrl, wiremockJarName } from '../../../config';
@@ -11,25 +9,29 @@ import {
 	ServerDetailsDto,
 	StubbDetailsDto
 } from '../../../models/types';
+import { isExistsByPath, makeDirByPath } from '../../files';
 
 const logger = new Logger('wiremock');
 
 export async function downloadWiremock(config: WiremockConfig, workDir: string): Promise<void> {
-	if (!existsSync(workDir)) {
-		logger.info(pGreen('Working dir does not exists. Creating it...'));
-		mkdirSync(workDir);
-	}
-
-	const wiremockUrl = `${wiremockDownloadUrl}/${config.version}/${wiremockJarName(config.version)}`;
-	const wiremockLocalFile = resolve(workDir, wiremockJarName(config.version));
-
-	try {
-		logger.info(pGreen('Downloading Wiremock standalone'));
-		await downloadFile(wiremockUrl, wiremockLocalFile);
-	} catch (err) {
-		logger.error(pRed('Unable to download Wiremock 👎'));
-		throw err;
-	}
+	return isExistsByPath(workDir)
+		.then(isExists => {
+			if (!isExists) {
+				logger.info(pGreen('Working dir does not exists. Creating it...'));
+				return makeDirByPath(workDir);
+			}
+		})
+		.then(() => {
+			const wiremockUrl = `${wiremockDownloadUrl}/${config.version}/${wiremockJarName(
+				config.version
+			)}`;
+			logger.info(pGreen('Downloading Wiremock standalone'));
+			return downloadFile(wiremockUrl, workDir, wiremockJarName(config.version));
+		})
+		.catch(err => {
+			logger.error(pRed('Unable to download Wiremock 👎'));
+			throw err;
+		});
 }
 
 export class WiremockServer implements LauncherService {
