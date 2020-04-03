@@ -2,13 +2,16 @@ import * as Ajv from 'ajv';
 import { configName, configSchemaName, defaultConfigPath, workDir } from '../config';
 import { Logger, pRed, pYellow } from '../server/log';
 import { HummockConfig, HummockConfigDto } from '../models/config';
-import { isExistsByPath, readFileByPath } from '../server/files';
+import { isExistsByPath, readFileByPath, getAbsolutePath } from '../server/files';
+import { getCustomConfigLocation } from '../models/common';
 
 const logger = new Logger('config');
 
 export function run(options: string[]): Promise<void> {
+	const configPath =
+		getCustomConfigLocation(options) || getAbsolutePath(defaultConfigPath, configName);
+
 	const workingDir = workDir;
-	const configPath = defaultConfigPath;
 	return validate(configPath, workingDir)
 		.then(() => {
 			logger.info('Config schema looks good!');
@@ -21,7 +24,7 @@ export function run(options: string[]): Promise<void> {
 export function validate(configPath: string, workingDir: string): Promise<HummockConfig> {
 	logger.info('Validating config... 💥');
 
-	return isExistsByPath(configPath, configName)
+	return isExistsByPath(configPath)
 		.then(isExists => {
 			if (!isExists) {
 				logger.error(
@@ -35,8 +38,8 @@ export function validate(configPath: string, workingDir: string): Promise<Hummoc
 			}
 
 			return Promise.all([
-				readFileByPath(configPath, configSchemaName),
-				readFileByPath(configPath, configName)
+				readFileByPath(defaultConfigPath, configSchemaName),
+				readFileByPath(configPath)
 			]);
 		})
 		.then(([schema, config]) => {

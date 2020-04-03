@@ -1,5 +1,5 @@
 import * as json5 from 'json5';
-import { resolve } from 'path';
+import { resolve, basename } from 'path';
 import {
 	unlink,
 	readdir,
@@ -23,19 +23,19 @@ export function readDirByPath(dir: string): Promise<string[]> {
 }
 
 export function deleteFileByPath(dir: string, fileName: string): Promise<void> {
-	const filePath = resolve(dir, fileName);
+	const filePath = getAbsolutePath(dir, fileName);
 	return new Promise((resolve, reject) => {
 		unlink(filePath, err => (err ? reject(err) : resolve()));
 	});
 }
 
 export function createFileStreamByPath(dir: string, fileName: string): WriteStream {
-	const filePath = resolve(dir, fileName);
+	const filePath = getAbsolutePath(dir, fileName);
 	return createWriteStream(filePath);
 }
 
 export function writeFileByPath<Data>(dir: string, fileName: string, content: Data): Promise<void> {
-	const filePath = resolve(dir, fileName);
+	const filePath = getAbsolutePath(dir, fileName);
 	return new Promise((resolve, reject) => {
 		writeFile(filePath, content, err => (err ? reject(err) : resolve()));
 	});
@@ -49,18 +49,18 @@ export function makeDirByPath(dir: string): Promise<void> {
 
 export function readFileByPath(
 	dir: string,
-	fileName: string
+	fileName?: string
 ): Promise<{ name: string; data: string }> {
-	const filePath = resolve(dir, fileName);
+	const filePath = getAbsolutePath(dir, fileName);
 	return new Promise((resolve, reject) => {
 		readFile(filePath, 'utf8', (err, data) =>
-			err ? reject(err) : resolve({ name: fileName, data })
+			err ? reject(err) : resolve({ name: basename(filePath), data })
 		);
 	});
 }
 
 export function isExistsByPath(dir: string, fileName?: string): Promise<boolean> {
-	const path = fileName ? resolve(dir, fileName) : dir;
+	const path = getAbsolutePath(dir, fileName);
 	return new Promise<boolean>((resolve, reject) => {
 		stat(path, err => {
 			if (err && err.code === 'ENOENT') {

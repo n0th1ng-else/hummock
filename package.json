@@ -4,6 +4,7 @@
   "description": "Caching responses from real api and use it as the stubbed data (Powered by talkback)",
   "main": "index.js",
   "scripts": {
+    "init": "./index.js init",
     "start": "./index.js start",
     "validate": "./index.js validate"
   },
