@@ -14,22 +14,22 @@ export function run(options: string[]): Promise<void> {
 	const workingDir = workDir;
 	return validate(configPath, workingDir)
 		.then(() => {
-			logger.info('Config schema looks good!');
+			logger.info('Config schema looks good 🚀');
 		})
 		.catch(err => {
-			logger.error('Config does not fit its schema', err);
+			logger.error('Config does not fit its schema 👎', err);
 		});
 }
 
 export function validate(configPath: string, workingDir: string): Promise<HummockConfig> {
-	logger.info('Validating config... 💥');
+	logger.info('Validating config... ✨');
 
 	return isExistsByPath(configPath)
 		.then(isExists => {
 			if (!isExists) {
 				logger.error(
 					pRed(
-						`Unable to find config file. Tried to look ${pYellow(configName)} in ${pYellow(
+						`Unable to find config file. Tried to get ${pYellow(
 							configPath
 						)}, but have no luck. Does the file exists? 🤔`
 					)

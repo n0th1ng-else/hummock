@@ -16,7 +16,7 @@ export async function run(options: string[]): Promise<void> {
 	return validate(configPath, workDir)
 		.then(config => checkWiremock(config))
 		.then(config => {
-			logger.info('Starting hummock... 💥');
+			logger.info('Starting hummock... 🚀');
 			return startServer(config);
 		})
 		.catch(err => {

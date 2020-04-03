@@ -121,7 +121,7 @@ class ApiRouter {
 		this.router.post('/proxies', (req: Request, res: Response) => {
 			const toggleData: ServerToggleDto = req.body;
 
-			logger.info(!toggleData.run ? 'Stopping mock servers' : 'Starting mock servers');
+			logger.info(!toggleData.run ? 'Stopping mock servers 🌑' : 'Starting mock servers 🌕');
 
 			Promise.all(
 				toggleData.ids.map(id => {
@@ -134,7 +134,7 @@ class ApiRouter {
 			)
 				.then(() => {
 					logger.info(
-						pGreen('all good'),
+						pGreen('All good ✨'),
 						this.launchers.map(launcher => launcher.state)
 					);
 					res.status(200).send({});
