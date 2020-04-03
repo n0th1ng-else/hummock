@@ -4,6 +4,8 @@ export const defaultConfigPath = getAbsolutePath(__dirname, '..', '..');
 
 export const configName = 'hummock.json';
 
+export const configSchemaName = 'hummock.json.schema';
+
 export const defaultWiremockVersion = '2.26.3';
 
 export const wiremockDownloadUrl =

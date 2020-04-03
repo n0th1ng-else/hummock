@@ -17,7 +17,7 @@ const withCommand = commandIndex !== -1;
 const mdl = withCommand ? require(args[commandIndex + 1]) : require('./cliHandler');
 
 mdl
-	.run(args)
+	.run(withCommand ? args.slice(commandIndex + 2) : args)
 	.then(status => {
 		if (withCommand) {
 			return;

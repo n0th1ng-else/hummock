@@ -11,10 +11,28 @@ import { StubbDetailsDto } from './types';
 import { cleanupString } from './common';
 
 export interface HummockConfigDto {
+	/**
+	 * Enable gui interface
+	 *
+	 * @default true
+	 * @TJS-type boolean
+	 */
 	gui?: boolean;
+	/**
+	 * Start all proxies while app launches
+	 *
+	 * @default false
+	 * @TJS-type boolean
+	 */
 	autostart?: boolean;
+	/**
+	 * Sets which provider to use
+	 *
+	 * @default "talkback"
+	 * @TJS-type string
+	 */
 	provider?: ProxyProvider;
-	recordFrom?: ServerForRecordDto[];
+	recordFrom: ServerForRecordDto[];
 	wiremock?: WiremockConfigDto;
 }
 
@@ -86,10 +104,21 @@ export class HummockConfig {
 }
 
 interface ServerForRecordDto {
+	/**
+	 * Remote server host which should be recorded (absolute url which must start with http:// of https://)
+	 *
+	 * @TJS-type string
+	 */
 	host: string;
 }
 
 interface WiremockConfigDto {
+	/**
+	 * Sets wiremock version
+	 *
+	 * @default "2.26.3"
+	 * @TJS-type string
+	 */
 	version?: string;
 }
 
