@@ -1,12 +1,12 @@
 {
   "name": "hummock",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Caching responses from real api and use it as the stubbed data (Powered by talkback)",
   "main": "index.js",
   "scripts": {
-    "init": "./index.js init",
-    "start": "./index.js start",
-    "validate": "./index.js validate",
+    "init": "node ./index.js init",
+    "start": "node ./index.js start",
+    "validate": "node ./index.js validate",
     "schema": "typescript-json-schema ./src/models/config.ts HummockConfigDto > hummock.json.schema"
   },
   "repository": {
