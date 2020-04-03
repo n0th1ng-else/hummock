@@ -43,9 +43,12 @@ function getConfig(workingDir: string, dto?: HummockConfigDto): HummockConfig {
 	const config = new HummockConfig(workingDir);
 
 	if (dto) {
-		config.setProvider(dto.provider);
-		config.setServers(dto.recordFrom);
-		config.setWiremockConfig(dto.wiremock);
+		config
+			.setProvider(dto.provider)
+			.setServers(dto.recordFrom)
+			.setWiremockConfig(dto.wiremock)
+			.toggleGui(dto.gui)
+			.setAutostart(dto.autostart);
 	}
 
 	return config;

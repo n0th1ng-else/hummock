@@ -11,6 +11,8 @@ import { StubbDetailsDto } from './types';
 import { cleanupString } from './common';
 
 export interface HummockConfigDto {
+	gui?: boolean;
+	autostart?: boolean;
 	provider?: ProxyProvider;
 	recordFrom?: ServerForRecordDto[];
 	wiremock?: WiremockConfigDto;
@@ -18,6 +20,8 @@ export interface HummockConfigDto {
 
 export class HummockConfig {
 	public provider = ProxyProvider.TALKBACK;
+	public enableGui = true;
+	public autostart = false;
 
 	private config = new WiremockConfig(defaultWiremockVersion);
 	private serversForRecord: ServerForRecord[] = [];
@@ -32,30 +36,52 @@ export class HummockConfig {
 		return this.serversForRecord;
 	}
 
-	public setServers(servers?: ServerForRecordDto[]): void {
+	public setServers(servers?: ServerForRecordDto[]): this {
 		if (!servers || !servers.length) {
 			this.serversForRecord = [];
-			return;
+			return this;
 		}
 
 		this.serversForRecord = servers.map(
 			(server, portOffset) =>
 				new ServerForRecord(server.host, firstServerPort + portOffset, this.workingDirRoot)
 		);
+
+		return this;
 	}
 
-	public setWiremockConfig(wiremock?: WiremockConfigDto): void {
+	public setWiremockConfig(wiremock?: WiremockConfigDto): this {
 		if (!wiremock) {
-			return;
+			return this;
 		}
 		this.config = new WiremockConfig(wiremock.version || defaultWiremockVersion);
+		return this;
 	}
 
-	public setProvider(provider?: ProxyProvider): void {
+	public setProvider(provider?: ProxyProvider): this {
 		this.provider =
 			provider && provider === ProxyProvider.WIREMOCK
 				? ProxyProvider.WIREMOCK
 				: ProxyProvider.TALKBACK;
+		return this;
+	}
+
+	public toggleGui(enable?: boolean): this {
+		if (typeof enable !== 'boolean') {
+			return this;
+		}
+
+		this.enableGui = enable;
+		return this;
+	}
+
+	public setAutostart(autostart?: boolean): this {
+		if (typeof autostart !== 'boolean') {
+			return this;
+		}
+
+		this.autostart = autostart;
+		return this;
 	}
 }
 
