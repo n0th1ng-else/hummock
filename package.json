@@ -4,11 +4,14 @@
   "description": "Caching responses from real api and use it as the stubbed data (Powered by talkback)",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "./index.js start"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/n0th1ng-else/hummock.git"
+  },
+  "bin": {
+    "hummock": "./index.js"
   },
   "keywords": [
     "mock",
@@ -16,7 +19,8 @@
     "talkback",
     "proxy",
     "record",
-    "stubb"
+    "stubb",
+    "hummock"
   ],
   "author": "Sergey Nikitin <srg.post@gmail.com>",
   "license": "MIT",
@@ -49,6 +53,7 @@
     "awesome-typescript-loader": "5.2.1",
     "chalk": "3.0.0",
     "compression-webpack-plugin": "3.1.0",
+    "cross-spawn": "7.0.1",
     "css-loader": "3.4.2",
     "express": "4.17.1",
     "express-history-api-fallback-middleware": "1.0.1",

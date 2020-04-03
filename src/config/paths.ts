@@ -8,6 +8,7 @@ export class AppPaths {
 	public readonly assets: AppPathsAssets;
 	public readonly files: AppPathsFiles;
 	public readonly commands: string;
+	public readonly cliBin: string;
 
 	private readonly dir = __dirname;
 
@@ -16,6 +17,7 @@ export class AppPaths {
 		this.release = getAbsolutePath(this.root, 'release');
 		this.src = getAbsolutePath(this.root, 'src');
 		this.commands = getAbsolutePath(this.src, 'scripts');
+		this.cliBin = getAbsolutePath(this.root, 'index.js');
 
 		const clientPath = getAbsolutePath(this.src, 'client');
 		this.modules = new AppPathsModules(this.root);

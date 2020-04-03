@@ -5,6 +5,11 @@ import { isExistsByPath, readFileByPath } from '../server/files';
 
 const logger = new Logger('config');
 
+export function run(): Promise<void> {
+	// TODO generate hummock.json
+	return Promise.resolve();
+}
+
 export function validate(configPath: string, workingDir: string): Promise<HummockConfig> {
 	return isExistsByPath(configPath, configName).then(isExists => {
 		if (!isExists) {
