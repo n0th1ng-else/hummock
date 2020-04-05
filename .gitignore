@@ -111,3 +111,6 @@ workdir/
 
 # app distributive
 release/
+
+# semantic-release artifacts
+semantic-release/
