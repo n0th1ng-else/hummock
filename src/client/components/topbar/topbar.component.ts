@@ -13,11 +13,11 @@ import styles from './topbar.component.less';
 export class TopbarComponent {
 	constructor(private readonly navigation: NavigationService) {}
 
-	public openHome() {
+	public openHome(): void {
 		this.navigation.toHome();
 	}
 
-	public openConfig() {
+	public openConfig(): void {
 		this.navigation.toConfig();
 	}
 }

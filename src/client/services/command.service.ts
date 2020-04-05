@@ -9,7 +9,8 @@ import { ServerToggleDto, StubbDetailsDto } from '../../models/types';
 export class CommandService {
 	constructor(private readonly rest: RestService) {}
 
-	public getConfig() {
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	public getConfig(): Observable<Object> {
 		return this.rest.getConfig();
 	}
 

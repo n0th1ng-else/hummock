@@ -22,6 +22,7 @@ export interface ServerDetailsDto extends ServerCoreDetailsDto {
 	stubbs: ListDto<StubbDetailsDto>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ServerListDto extends ListDto<ServerListDetailsDto> {}
 
 export enum ServerForRecordState {

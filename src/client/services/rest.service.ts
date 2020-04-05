@@ -15,7 +15,8 @@ export class RestService {
 
 	constructor(private readonly http: HttpClient) {}
 
-	public getConfig() {
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	public getConfig(): Observable<Object> {
 		return this.http.get(this.getPath('config'));
 	}
 

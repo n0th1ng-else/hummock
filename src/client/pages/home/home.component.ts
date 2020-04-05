@@ -51,7 +51,7 @@ export class HomeComponent implements OnDestroy {
 		this.updater = window.setInterval(() => this.updateStubbCount(), 1000);
 	}
 
-	public ngOnDestroy() {
+	public ngOnDestroy(): void {
 		if (this.updater) {
 			window.clearInterval(this.updater);
 			this.updater = 0;

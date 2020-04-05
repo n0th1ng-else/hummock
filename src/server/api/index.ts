@@ -6,11 +6,10 @@ import { ServerToggleDto, StubbDetailsDto } from '../../models/types';
 
 const logger = new Logger('api');
 
-export function pickApiRoutes(app: ExpressApp, config: HummockConfig): Promise<ApiRouter> {
-	const apiRouter = new ApiRouter(config);
-	app.use('/api/v0', apiRouter.router);
-	app.all('/api/*', showNotFound);
-	return config.autostart ? apiRouter.startAll().then(() => apiRouter) : Promise.resolve(apiRouter);
+function showNotFound(req: Request, res: Response): void {
+	res.status(404).send({
+		message: 'Not found'
+	});
 }
 
 class ApiRouter {
@@ -24,14 +23,18 @@ class ApiRouter {
 	}
 
 	public stopAll(): Promise<void> {
-		return Promise.all(this.launchers.map(launcher => launcher.stop())).then(() => {});
+		return Promise.all(this.launchers.map(launcher => launcher.stop())).then(() => {
+			// Make single void as the result
+		});
 	}
 
 	public startAll(): Promise<void> {
-		return Promise.all(this.launchers.map(launcher => launcher.start())).then(() => {});
+		return Promise.all(this.launchers.map(launcher => launcher.start())).then(() => {
+			// Make single void as the result
+		});
 	}
 
-	private handleRoutes() {
+	private handleRoutes(): void {
 		this.router.get('/config', (req: Request, res: Response) => {
 			res.status(200).send(this.config);
 		});
@@ -149,8 +152,9 @@ class ApiRouter {
 	}
 }
 
-function showNotFound(req: Request, res: Response) {
-	res.status(404).send({
-		message: 'Not found'
-	});
+export function pickApiRoutes(app: ExpressApp, config: HummockConfig): Promise<ApiRouter> {
+	const apiRouter = new ApiRouter(config);
+	app.use('/api/v0', apiRouter.router);
+	app.all('/api/*', showNotFound);
+	return config.autostart ? apiRouter.startAll().then(() => apiRouter) : Promise.resolve(apiRouter);
 }

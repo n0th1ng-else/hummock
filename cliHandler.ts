@@ -5,42 +5,6 @@ import { readDirByPath, isExistsByPath, getAbsolutePath } from './src/server/fil
 
 const logger = new Logger('cli');
 
-export function run(options: string[]): Promise<number> {
-	// Get commands list
-	const paths = new AppPaths();
-	return readDirByPath(paths.commands).then(files => {
-		const commands = files
-			.filter(fn => fn.match(/\.[jt]s$/))
-			.reduce((results, fn) => {
-				const key = fn.replace(/\.[jt]s$/, '');
-				results[key] = fn;
-				return results;
-			}, {});
-
-		// Fetch command from the arguments
-		const commandIndex = options.findIndex(arg => commands[arg]);
-		const command = options[commandIndex] || options[0];
-		const nodeArgs = options.slice(0, commandIndex);
-		const commandArgs = options.slice(commandIndex + 1);
-
-		if (!command) {
-			logger.error('Hummock command is not provided. Please execute "hummock <command>"');
-			logger.info(`Available commands are: \n  ${Object.keys(commands).join('\n  ')}`);
-			return Promise.reject();
-		}
-
-		if (!commands[command]) {
-			logger.error(`Unknown command "hummock ${command}"`);
-			logger.info(`Available commands are: \n  ${Object.keys(commands).join('\n  ')}`);
-			return Promise.reject();
-		}
-
-		// Spawn process
-		logger.info(`Launching command "hummock ${command}" ✨`);
-		return runCommand(paths.commands, commands[command], nodeArgs, commandArgs);
-	});
-}
-
 function runCommand(
 	filePath: string,
 	fileName: string,
@@ -84,5 +48,41 @@ function runCommand(
 		}
 
 		return result.status || 0;
+	});
+}
+
+export function run(options: string[]): Promise<number> {
+	// Get commands list
+	const paths = new AppPaths();
+	return readDirByPath(paths.commands).then(files => {
+		const commands = files
+			.filter(fn => fn.match(/\.[jt]s$/))
+			.reduce((results, fn) => {
+				const key = fn.replace(/\.[jt]s$/, '');
+				results[key] = fn;
+				return results;
+			}, {});
+
+		// Fetch command from the arguments
+		const commandIndex = options.findIndex(arg => commands[arg]);
+		const command = options[commandIndex] || options[0];
+		const nodeArgs = options.slice(0, commandIndex);
+		const commandArgs = options.slice(commandIndex + 1);
+
+		if (!command) {
+			logger.error('Hummock command is not provided. Please execute "hummock <command>"');
+			logger.info(`Available commands are: \n  ${Object.keys(commands).join('\n  ')}`);
+			return Promise.reject();
+		}
+
+		if (!commands[command]) {
+			logger.error(`Unknown command "hummock ${command}"`);
+			logger.info(`Available commands are: \n  ${Object.keys(commands).join('\n  ')}`);
+			return Promise.reject();
+		}
+
+		// Spawn process
+		logger.info(`Launching command "hummock ${command}" ✨`);
+		return runCommand(paths.commands, commands[command], nodeArgs, commandArgs);
 	});
 }

@@ -17,6 +17,7 @@ class AppLoader {
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public launch(): Promise<any> {
 		if (runtimeConfig.hmr) {
 			return this.hmrBootstrap(module, this.bootstrap);
@@ -34,6 +35,7 @@ class AppLoader {
 		bootstrapHandler: () => Promise<NgModuleRef<AppModule>>
 	): Promise<NgModuleRef<AppModule>> {
 		if (module.hot) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			let ngModule: NgModuleRef<any>;
 			module.hot.accept();
 

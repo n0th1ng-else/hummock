@@ -7,7 +7,8 @@
     "init": "node ./index.js init",
     "start": "node ./index.js start",
     "validate": "node ./index.js validate",
-    "schema": "typescript-json-schema ./src/models/config.ts HummockConfigDto > hummock.json.schema"
+    "schema": "typescript-json-schema ./src/models/config.ts HummockConfigDto > hummock.json.schema",
+    "lint": "eslint --ext .js,.ts ."
   },
   "repository": {
     "type": "git",
@@ -33,7 +34,7 @@
   "homepage": "https://github.com/n0th1ng-else/hummock#readme",
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged"
+      "pre-commit": "pretty-quick --staged && npm run lint"
     }
   },
   "dependencies": {
@@ -84,6 +85,12 @@
     "zone.js": "0.10.3"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "2.26.0",
+    "@typescript-eslint/parser": "2.26.0",
+    "eslint": "6.8.0",
+    "eslint-config-prettier": "6.10.1",
+    "eslint-plugin-prettier": "3.1.2",
+    "lint-staged": "10.1.1",
     "husky": "4.2.3",
     "pretty-quick": "2.0.1",
     "prettier": "2.0.2",

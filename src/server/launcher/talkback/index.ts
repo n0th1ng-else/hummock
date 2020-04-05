@@ -10,6 +10,10 @@ import {
 } from '../../../models/types';
 import { cleanupString } from '../../../models/common';
 
+function tapeNameGenerator(tapeNumber: number, tape: Tape): string {
+	return `${tape.req.method}-${cleanupString(tape.req.url)}`;
+}
+
 export class TalkbackServer implements LauncherService {
 	private stateParam = ServerForRecordState.IDLE;
 	private instance;
@@ -104,8 +108,4 @@ export class TalkbackServer implements LauncherService {
 			tapeNameGenerator
 		});
 	}
-}
-
-function tapeNameGenerator(tapeNumber: number, tape: Tape): string {
-	return `${tape.req.method}-${cleanupString(tape.req.url)}`;
 }
