@@ -2,7 +2,7 @@ version: 2.1
 executors:
   node_executor:
     docker:
-      - image: circleci/node:10.15.3-browsers
+      - image: circleci/node:12.16.1-browsers
 
 commands:
   install_dependencies:
@@ -32,7 +32,6 @@ jobs:
           command: unset CIRCLE_PR_NUMBER && unset CIRCLE_PULL_REQUEST && unset CI_PULL_REQUEST && npx semantic-release --dry-run --branch ${CIRCLE_BRANCH} 2>&1 | tee semantic-release/index.log
       - store_artifacts:
           path: semantic-release
-      - persist_job
 
   semantic_release_master:
     executor: node_executor
@@ -50,7 +49,7 @@ jobs:
 workflows:
   version: 2
 
-  test_and_release:
+  npm_release:
     jobs:
       - semantic_release_master:
           context: NPM
