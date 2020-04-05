@@ -1,12 +1,13 @@
 import * as webpack from 'webpack';
 import { generate as generateDev } from './webpack.config.dev';
 import { generate as generateProd } from './webpack.config.prod';
+import { Dictionary } from '../../models/types';
 
 export function getConfig(isProductionMode: boolean): webpack.Configuration {
 	return isProductionMode ? generateProd() : generateDev();
 }
 
-export function getDevServerConfig() {
+export function getDevServerConfig(): { stats: Dictionary<boolean> } {
 	return {
 		stats: {
 			colors: true,

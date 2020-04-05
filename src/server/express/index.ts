@@ -10,22 +10,6 @@ import { HummockConfig } from '../../models/config';
 
 const logger = new Logger('express');
 
-export async function startServer(config: HummockConfig, port = 3000): Promise<void> {
-	const app = initServer();
-	return pickApiRoutes(app, config).then(() => {
-		if (config.enableGui) {
-			pickGui(app);
-		}
-
-		return new Promise(resolve => {
-			app.listen(port, () => {
-				logger.info(`${pGreen('Server started.')} Go visit http://localhost:${port} 🚀`);
-				resolve();
-			});
-		});
-	});
-}
-
 function initServer(): express.Application {
 	const app: express.Application = express();
 	app.use(express.json());
@@ -45,4 +29,20 @@ function pickGui(app: express.Application): express.Application {
 	app.use(webpackDevMiddleware(compiler, getDevServerConfig()));
 	app.use(webpackHotMiddleware(compiler));
 	return app;
+}
+
+export async function startServer(config: HummockConfig, port = 3000): Promise<void> {
+	const app = initServer();
+	return pickApiRoutes(app, config).then(() => {
+		if (config.enableGui) {
+			pickGui(app);
+		}
+
+		return new Promise(resolve => {
+			app.listen(port, () => {
+				logger.info(`${pGreen('Server started.')} Go visit http://localhost:${port} 🚀`);
+				resolve();
+			});
+		});
+	});
 }

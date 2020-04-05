@@ -59,6 +59,7 @@ export class WiremockServer implements LauncherService {
 		throw new Error('Method not implemented.');
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public updateStubb(stubb: StubbDetailsDto): Promise<void> {
 		throw new Error('Method not implemented.');
 	}
@@ -67,6 +68,7 @@ export class WiremockServer implements LauncherService {
 		throw new Error('Method not implemented.');
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public deleteStubb(stubbId: string): Promise<void> {
 		throw new Error('Method not implemented.');
 	}

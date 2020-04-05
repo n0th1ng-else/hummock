@@ -5,32 +5,6 @@ import { isExistsByPath, writeFileByPath, createFileStreamByPath } from './files
 
 const logger = new Logger('file-download');
 
-export async function downloadFile(
-	url: string,
-	localFilePath: string,
-	localFileName: string
-): Promise<void> {
-	return isExistsByPath(localFilePath, localFileName).then(isExists => {
-		if (isExists) {
-			logger.info(pGreen('File exists, skipping download ✨'));
-			return;
-		}
-
-		logger.info(pGreen('Starting file download ⏱ '), url);
-		return createFileAndDownload(url, localFilePath, localFileName);
-	});
-}
-
-async function createFileAndDownload(
-	url: string,
-	localFilePath: string,
-	localFileName: string
-): Promise<void> {
-	return writeFileByPath(localFilePath, localFileName, '').then(() =>
-		downloadFileWithProgress(url, localFilePath, localFileName)
-	);
-}
-
 async function downloadFileWithProgress(
 	url: string,
 	localFilePath: string,
@@ -64,5 +38,31 @@ async function downloadFileWithProgress(
 			reject(err);
 		});
 		data.pipe(createFileStreamByPath(localFilePath, localFileName));
+	});
+}
+
+async function createFileAndDownload(
+	url: string,
+	localFilePath: string,
+	localFileName: string
+): Promise<void> {
+	return writeFileByPath(localFilePath, localFileName, '').then(() =>
+		downloadFileWithProgress(url, localFilePath, localFileName)
+	);
+}
+
+export async function downloadFile(
+	url: string,
+	localFilePath: string,
+	localFileName: string
+): Promise<void> {
+	return isExistsByPath(localFilePath, localFileName).then(isExists => {
+		if (isExists) {
+			logger.info(pGreen('File exists, skipping download ✨'));
+			return;
+		}
+
+		logger.info(pGreen('Starting file download ⏱ '), url);
+		return createFileAndDownload(url, localFilePath, localFileName);
 	});
 }

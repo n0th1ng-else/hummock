@@ -29,7 +29,7 @@ export class ConfigComponent {
 		this.dataSource.data = this.generateTree(this.config);
 	}
 
-	public hasChild(_: number, node: ConfigNode) {
+	public hasChild(_: number, node: ConfigNode): boolean {
 		return !!node.children && node.children.length > 0;
 	}
 

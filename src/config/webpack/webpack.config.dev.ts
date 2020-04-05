@@ -9,6 +9,7 @@ export function generate(): webpack.Configuration {
 	const plugins = config.plugins || [];
 	config.mode = ApplicationMode.DEVELOPMENT;
 	config.devtool = 'cheap-module-eval-source-map';
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	(config.entry as any).hmr = paths.modules.hmr;
 
 	config.plugins = [

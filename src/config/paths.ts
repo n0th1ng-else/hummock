@@ -1,35 +1,5 @@
 import { getAbsolutePath } from '../server/files';
 
-export class AppPaths {
-	public readonly root: string;
-	public readonly release: string;
-	public readonly src: string;
-	public readonly modules: AppPathsModules;
-	public readonly assets: AppPathsAssets;
-	public readonly files: AppPathsFiles;
-	public readonly commands: string;
-	public readonly cliBin: string;
-
-	private readonly dir = __dirname;
-
-	constructor() {
-		this.root = getAbsolutePath(this.dir, '..', '..');
-		this.release = getAbsolutePath(this.root, 'release');
-		this.src = getAbsolutePath(this.root, 'src');
-		this.commands = getAbsolutePath(this.src, 'scripts');
-		this.cliBin = getAbsolutePath(this.root, 'index.js');
-
-		const clientPath = getAbsolutePath(this.src, 'client');
-		this.modules = new AppPathsModules(this.root);
-		this.assets = new AppPathsAssets(clientPath);
-		this.files = new AppPathsFiles(clientPath, this.release);
-	}
-
-	public getCommand(name: string): string {
-		return getAbsolutePath(this.commands, name);
-	}
-}
-
 class AppPathsModules {
 	public readonly zone: string;
 	public readonly reflectMetadata: string;
@@ -65,5 +35,35 @@ class AppPathsFiles {
 		this.app = getAbsolutePath(clientPath, 'appLoader.ts');
 		this.htmlTemplate = getAbsolutePath(clientPath, 'index.html');
 		this.htmlResult = getAbsolutePath(releasePath, 'index.html');
+	}
+}
+
+export class AppPaths {
+	public readonly root: string;
+	public readonly release: string;
+	public readonly src: string;
+	public readonly modules: AppPathsModules;
+	public readonly assets: AppPathsAssets;
+	public readonly files: AppPathsFiles;
+	public readonly commands: string;
+	public readonly cliBin: string;
+
+	private readonly dir = __dirname;
+
+	constructor() {
+		this.root = getAbsolutePath(this.dir, '..', '..');
+		this.release = getAbsolutePath(this.root, 'release');
+		this.src = getAbsolutePath(this.root, 'src');
+		this.commands = getAbsolutePath(this.src, 'scripts');
+		this.cliBin = getAbsolutePath(this.root, 'index.js');
+
+		const clientPath = getAbsolutePath(this.src, 'client');
+		this.modules = new AppPathsModules(this.root);
+		this.assets = new AppPathsAssets(clientPath);
+		this.files = new AppPathsFiles(clientPath, this.release);
+	}
+
+	public getCommand(name: string): string {
+		return getAbsolutePath(this.commands, name);
 	}
 }

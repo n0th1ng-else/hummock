@@ -36,6 +36,40 @@ export interface HummockConfigDto {
 	wiremock?: WiremockConfigDto;
 }
 
+export class ServerForRecord {
+	public readonly id = nanoid(5);
+	public readonly workDir: string;
+	public stubbs = 0;
+
+	constructor(public readonly host: string, public readonly port: number, workingDirRoot: string) {
+		const hostEscaped = cleanupString(host);
+		this.workDir = getAbsolutePath(workingDirRoot, hostEscaped);
+		this.updateStubbCount();
+	}
+
+	public updateStubbCount(): Promise<void> {
+		return getFilesNumberInDir(this.workDir).then(stubbs => {
+			this.stubbs = stubbs;
+		});
+	}
+
+	public getStubbData(): Promise<StubbDetailsDto[]> {
+		return getFilesInDir(this.workDir);
+	}
+
+	public updateStubb(stubb: StubbDetailsDto): Promise<void> {
+		return writeFileOnDisk(this.workDir, stubb.name, stubb.content);
+	}
+
+	public deleteStubb(stubbId: string): Promise<void> {
+		return deleteFile(this.workDir, stubbId);
+	}
+}
+
+export class WiremockConfig {
+	constructor(public readonly version: string) {}
+}
+
 export class HummockConfig {
 	public provider = ProxyProvider.TALKBACK;
 	public enableGui = true;
@@ -120,38 +154,4 @@ interface WiremockConfigDto {
 	 * @TJS-type string
 	 */
 	version?: string;
-}
-
-export class ServerForRecord {
-	public readonly id = nanoid(5);
-	public readonly workDir: string;
-	public stubbs = 0;
-
-	constructor(public readonly host: string, public readonly port: number, workingDirRoot: string) {
-		const hostEscaped = cleanupString(host);
-		this.workDir = getAbsolutePath(workingDirRoot, hostEscaped);
-		this.updateStubbCount();
-	}
-
-	public updateStubbCount(): Promise<void> {
-		return getFilesNumberInDir(this.workDir).then(stubbs => {
-			this.stubbs = stubbs;
-		});
-	}
-
-	public getStubbData(): Promise<StubbDetailsDto[]> {
-		return getFilesInDir(this.workDir);
-	}
-
-	public updateStubb(stubb: StubbDetailsDto): Promise<void> {
-		return writeFileOnDisk(this.workDir, stubb.name, stubb.content);
-	}
-
-	public deleteStubb(stubbId: string): Promise<void> {
-		return deleteFile(this.workDir, stubbId);
-	}
-}
-
-export class WiremockConfig {
-	constructor(public readonly version: string) {}
 }

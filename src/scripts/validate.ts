@@ -7,18 +7,19 @@ import { getCustomConfigLocation } from '../models/common';
 
 const logger = new Logger('config');
 
-export function run(options: string[]): Promise<void> {
-	const configPath =
-		getCustomConfigLocation(options) || getAbsolutePath(defaultConfigPath, configName);
+function getConfig(workingDir: string, dto?: HummockConfigDto): HummockConfig {
+	const config = new HummockConfig(workingDir);
 
-	const workingDir = workDir;
-	return validate(configPath, workingDir)
-		.then(() => {
-			logger.info('Config schema looks good 🚀');
-		})
-		.catch(err => {
-			logger.error('Config does not fit its schema 👎', err);
-		});
+	if (dto) {
+		config
+			.setProvider(dto.provider)
+			.setServers(dto.recordFrom)
+			.setWiremockConfig(dto.wiremock)
+			.toggleGui(dto.gui)
+			.setAutostart(dto.autostart);
+	}
+
+	return config;
 }
 
 export function validate(configPath: string, workingDir: string): Promise<HummockConfig> {
@@ -65,17 +66,16 @@ export function validate(configPath: string, workingDir: string): Promise<Hummoc
 		});
 }
 
-function getConfig(workingDir: string, dto?: HummockConfigDto): HummockConfig {
-	const config = new HummockConfig(workingDir);
+export function run(options: string[]): Promise<void> {
+	const configPath =
+		getCustomConfigLocation(options) || getAbsolutePath(defaultConfigPath, configName);
 
-	if (dto) {
-		config
-			.setProvider(dto.provider)
-			.setServers(dto.recordFrom)
-			.setWiremockConfig(dto.wiremock)
-			.toggleGui(dto.gui)
-			.setAutostart(dto.autostart);
-	}
-
-	return config;
+	const workingDir = workDir;
+	return validate(configPath, workingDir)
+		.then(() => {
+			logger.info('Config schema looks good 🚀');
+		})
+		.catch(err => {
+			logger.error('Config does not fit its schema 👎', err);
+		});
 }

@@ -9,6 +9,14 @@ import { getCustomConfigLocation } from '../models/common';
 
 const logger = new Logger('launcher');
 
+function checkWiremock(config: HummockConfig): Promise<HummockConfig> {
+	if (config.provider === ProxyProvider.WIREMOCK) {
+		return downloadWiremock(config.wiremock, workDir).then(() => config);
+	}
+
+	return Promise.resolve(config);
+}
+
 export async function run(options: string[]): Promise<void> {
 	const configPath =
 		getCustomConfigLocation(options) || getAbsolutePath(defaultConfigPath, configName);
@@ -22,12 +30,4 @@ export async function run(options: string[]): Promise<void> {
 		.catch(err => {
 			logger.error('Something went wrong', err);
 		});
-}
-
-function checkWiremock(config: HummockConfig) {
-	if (config.provider === ProxyProvider.WIREMOCK) {
-		return downloadWiremock(config.wiremock, workDir).then(() => config);
-	}
-
-	return Promise.resolve(config);
 }
