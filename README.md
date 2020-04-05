@@ -1,8 +1,8 @@
 # hummock
 
 Caching responses from real api and use it as the stubbed data.
-This is stanalone GUI tool which runs PROXY servers for every host
-you provide in the config file.
+This is a **standalone GUI application** which runs PROXY servers for every host
+you provide in the config file. (see the Usage section)
 
 Powered by [Talkback](https://www.npmjs.com/package/talkback).
 For those who want to use recording features
