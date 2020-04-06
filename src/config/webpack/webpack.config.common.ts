@@ -1,6 +1,8 @@
 import * as webpack from 'webpack';
 import * as HtmlPlugin from 'html-webpack-plugin';
+import * as TerserPlugin from 'terser-webpack-plugin';
 import { AppPaths } from '../paths';
+import { ApplicationMode } from './types';
 
 export function generate(isProductionMode: boolean): webpack.Configuration {
 	const paths = new AppPaths();
@@ -19,6 +21,7 @@ export function generate(isProductionMode: boolean): webpack.Configuration {
 	const htmlOutput = paths.files.htmlResult;
 
 	return {
+		mode: isProductionMode ? ApplicationMode.PRODUCTION : ApplicationMode.DEVELOPMENT,
 		context: paths.root,
 		entry: {
 			application: applicationPath
@@ -44,7 +47,10 @@ export function generate(isProductionMode: boolean): webpack.Configuration {
 					test: /\.html$/,
 					use: [
 						{
-							loader: 'html-loader'
+							loader: 'html-loader',
+							options: {
+								minimize: false
+							}
 						}
 					]
 				},
@@ -112,7 +118,8 @@ export function generate(isProductionMode: boolean): webpack.Configuration {
 				}
 			},
 			noEmitOnErrors: true,
-			minimize: false
+			minimize: isProductionMode,
+			minimizer: [new TerserPlugin()]
 		},
 		plugins: [
 			new webpack.ContextReplacementPlugin(/angular(\\|\/)core/, publicPath),

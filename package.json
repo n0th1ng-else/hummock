@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "init": "node ./index.js init",
-    "start": "node ./index.js start",
+    "build": "node ./index.js build",
+    "start": "node ./index.js start --mode production",
+    "dev": "node ./index.js start --mode development",
     "validate": "node ./index.js validate",
     "schema": "typescript-json-schema ./src/models/config.ts HummockConfigDto > hummock.json.schema",
     "lint": "eslint --ext .js,.ts ."
@@ -61,7 +63,9 @@
     "cross-spawn": "7.0.1",
     "css-loader": "3.4.2",
     "express": "4.17.1",
+    "express-history-api-fallback": "2.2.1",
     "express-history-api-fallback-middleware": "1.0.1",
+    "express-static-gzip": "2.0.6",
     "file-loader": "6.0.0",
     "html-loader": "1.0.0",
     "html-webpack-plugin": "4.0.2",

@@ -5,7 +5,7 @@ import { workDir, defaultConfigPath, ProxyProvider, configName } from '../config
 import { downloadWiremock } from '../server/launcher/wiremock';
 import { HummockConfig } from '../models/config';
 import { getAbsolutePath } from '../server/files';
-import { getCustomConfigLocation } from '../models/common';
+import { getCustomConfigLocation, isDevelopmentMode } from '../models/common';
 
 const logger = new Logger('launcher');
 
@@ -18,6 +18,8 @@ function checkWiremock(config: HummockConfig): Promise<HummockConfig> {
 }
 
 export async function run(options: string[]): Promise<void> {
+	const isDevelopment = isDevelopmentMode(options);
+
 	const configPath =
 		getCustomConfigLocation(options) || getAbsolutePath(defaultConfigPath, configName);
 
@@ -25,7 +27,7 @@ export async function run(options: string[]): Promise<void> {
 		.then(config => checkWiremock(config))
 		.then(config => {
 			logger.info('Starting hummock... 🚀');
-			return startServer(config);
+			return startServer(config, isDevelopment);
 		})
 		.catch(err => {
 			logger.error('Something went wrong', err);
