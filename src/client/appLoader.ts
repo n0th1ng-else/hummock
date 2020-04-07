@@ -5,11 +5,6 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { createNewHosts } from '@angularclass/hmr';
 import { AppModule } from './app/app.module';
 
-const runtimeConfig = {
-	isProductionMode: false,
-	hmr: true
-};
-
 class AppLoader {
 	constructor() {
 		if (runtimeConfig.isProductionMode) {
@@ -17,8 +12,7 @@ class AppLoader {
 		}
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	public launch(): Promise<any> {
+	public launch(): Promise<NgModuleRef<AppModule>> {
 		if (runtimeConfig.hmr) {
 			return this.hmrBootstrap(module, this.bootstrap);
 		} else {

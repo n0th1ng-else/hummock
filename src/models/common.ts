@@ -10,3 +10,13 @@ export function getCustomConfigLocation(appArgs: string[]): string {
 
 	return appArgs[cfgIndex + 1] || '';
 }
+
+export function isDevelopmentMode(appArgs: string[]): boolean {
+	const cfgIndex = appArgs.findIndex(option => option === '--mode');
+	if (cfgIndex < 0) {
+		return false;
+	}
+
+	const mode = appArgs[cfgIndex + 1] || '';
+	return mode === 'development';
+}

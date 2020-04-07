@@ -18,3 +18,8 @@ declare interface NodeModule {
 		dispose(fn?: () => void): void;
 	};
 }
+
+declare const runtimeConfig: {
+	isProductionMode: boolean;
+	hmr: boolean;
+};
