@@ -13,6 +13,10 @@
                 "host": {
                     "description": "Remote server host which should be recorded (absolute url which must start with http:// of https://)",
                     "type": "string"
+                },
+                "port": {
+                    "description": "Local proxy listener port",
+                    "type": "number"
                 }
             },
             "type": "object"
@@ -57,3 +61,4 @@
     },
     "type": "object"
 }
+
