@@ -12,7 +12,8 @@ Rendered by [Angular](https://angular.io/) [Material](https://material.angular.i
 
 # Usage
 
-create `hummock.json` file in the root with content as listed below
+create `hummock.json` file in the root with content as listed below.
+Humock sets the port for each listener automatically, but you can specify it by yourself.
 
 ```json
 {
@@ -21,13 +22,15 @@ create `hummock.json` file in the root with content as listed below
 			"host": "https://some-host.com"
 		},
 		{
-			"host": "http://another-host-example.com"
+			"host": "http://another-host-example-with-custom-port-for-listener.com",
+			"port": 8001
 		}
 	]
 }
 ```
 
-run `npm start` and visit `http://localhost:3000`
+run `npm start` and visit `http://localhost:3000`.
+Hummock will start and you would be able to access new entrypoint on localhost: `localhost:6000` and `localhost:8001` (considering the config above)
 
 [Config schema](https://github.com/n0th1ng-else/hummock/blob/master/hummock.json.schema) is located in the project root
 

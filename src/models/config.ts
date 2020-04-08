@@ -96,7 +96,11 @@ export class HummockConfig {
 
 		this.serversForRecord = servers.map(
 			(server, portOffset) =>
-				new ServerForRecord(server.host, firstServerPort + portOffset, this.workingDirRoot)
+				new ServerForRecord(
+					server.host,
+					server.port || firstServerPort + portOffset,
+					this.workingDirRoot
+				)
 		);
 
 		return this;
@@ -144,6 +148,12 @@ interface ServerForRecordDto {
 	 * @TJS-type string
 	 */
 	host: string;
+	/**
+	 * Local proxy listener port
+	 *
+	 * @TJS-type number
+	 */
+	port?: number;
 }
 
 interface WiremockConfigDto {
