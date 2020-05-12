@@ -3,12 +3,12 @@
 	<div mat-dialog-content>
 		<mat-form-field>
 			<mat-label>Response body text</mat-label>
-			<textarea matInput [(ngModel)]="text"></textarea>
+			<textarea matInput [(ngModel)]="text" cdkFocusInitial></textarea>
 		</mat-form-field>
 	</div>
 	<div mat-dialog-actions>
 		<button mat-stroked-button (click)="closeDialog()">Cancel</button>
-		<button mat-stroked-button color="primary" (click)="closeDialog(text)" cdkFocusInitial>
+		<button mat-stroked-button color="primary" (click)="closeDialog(text)">
 			Ok
 		</button>
 	</div>

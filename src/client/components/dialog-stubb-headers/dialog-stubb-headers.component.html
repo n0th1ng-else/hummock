@@ -1,0 +1,26 @@
+<div>
+	<h1 mat-dialog-title>Response headers</h1>
+	<div mat-dialog-content>
+		<mat-list role="list">
+			<mat-list-item role="listitem" *ngFor="let item of headers">
+				<button mat-icon-button (click)="openHeaderValueDialog(item)">
+					<mat-icon>create</mat-icon>
+				</button>
+				<b>{{ item.header }}</b
+				>: {{ item.value }}
+			</mat-list-item>
+			<mat-list-item role="listitem">
+				<button mat-icon-button (click)="openHeaderDialog()">
+					<mat-icon>add</mat-icon>
+				</button>
+				<b>Add new header</b>
+			</mat-list-item>
+		</mat-list>
+	</div>
+	<div mat-dialog-actions>
+		<button mat-stroked-button (click)="closeDialog()">Cancel</button>
+		<button mat-stroked-button color="primary" (click)="closeDialog(true)" cdkFocusInitial>
+			Ok
+		</button>
+	</div>
+</div>

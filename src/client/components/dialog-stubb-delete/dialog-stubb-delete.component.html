@@ -1,0 +1,12 @@
+<div>
+	<h1 mat-dialog-title>Delete stubb</h1>
+	<div mat-dialog-content>
+		Are you sure you want to delete recorded stubb?
+	</div>
+	<div mat-dialog-actions>
+		<button mat-stroked-button (click)="closeDialog()" cdkFocusInitial>Cancel</button>
+		<button mat-stroked-button color="warn" (click)="closeDialog(true)">
+			Delete
+		</button>
+	</div>
+</div>

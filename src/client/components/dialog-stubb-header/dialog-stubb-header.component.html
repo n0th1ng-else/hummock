@@ -1,0 +1,16 @@
+<div class="stubb-header-dialog">
+	<h1 mat-dialog-title>Response header</h1>
+	<div mat-dialog-content>
+		<mat-form-field>
+			<mat-label>{{ title }}</mat-label>
+			<input matInput [(ngModel)]="text" cdkFocusInitial />
+			<mat-hint *ngIf="hasData">Leave header empty to remove</mat-hint>
+		</mat-form-field>
+	</div>
+	<div mat-dialog-actions>
+		<button mat-stroked-button (click)="cancelDialog()">Cancel</button>
+		<button mat-stroked-button color="primary" (click)="closeDialog(text)">
+			Save
+		</button>
+	</div>
+</div>
