@@ -7,13 +7,21 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import {
+	DialogStubbDeleteComponent,
+	DialogStubbDeleteComponentModule
+} from '../../components/dialog-stubb-delete/dialog-stubb-delete.component';
+import {
+	DialogStubbHeadersComponent,
+	DialogStubbHeadersComponentModule
+} from '../../components/dialog-stubb-headers/dialog-stubb-headers.component';
 import { TitleService } from '../../services/title.service';
 import { MaterialModule } from '../../app/material.module';
 import { ServerModel } from '../../models/server';
 import { copyToClipboard } from '../../tools/clipboard';
 import { NotificationService } from '../../services/notification.service';
 import { HostStatusComponentModule } from '../../components/host-status/host-status.component';
-import { StubbDetailsDto, StubbFileDto } from '../../../models/types';
+import { Dictionary, StubbDetailsDto } from '../../../models/types';
 import { MatDialog } from '@angular/material/dialog';
 import {
 	DialogStubbBodyComponentModule,
@@ -71,11 +79,12 @@ export class HostComponent implements OnDestroy {
 		this.openBodyEditor(stubb);
 	}
 
-	public deleteStubb(stubb: StubbDetailsDto): void {
-		this.api.deleteStubb(this.id, stubb).subscribe(() => {
-			this.updateData(true);
-			this.notification.showMessage('Stubb was deleted');
-		});
+	public showStubbResponseHeaders(stubb: StubbDetailsDto): void {
+		this.openHeadersEditor(stubb);
+	}
+
+	public showStubbDelete(stubb: StubbDetailsDto): void {
+		this.confirmDelete(stubb);
 	}
 
 	public isLaunched(): boolean {
@@ -119,17 +128,14 @@ export class HostComponent implements OnDestroy {
 			})
 			.afterClosed()
 			.pipe(
-				filter((result?: string) => result !== undefined),
-				flatMap((result: string) => {
-					const res = stubb.content.res;
-					const content: StubbFileDto = {
-						...stubb.content,
-						res: { status: res.status, headers: res.headers, body: result }
-					};
-					return this.api.updateStubb(this.id, { name: stubb.name, content });
+				filter((body?: string) => body !== undefined),
+				flatMap((body: string) => {
+					stubb.content.res.body = body;
+					return this.api.updateStubb(this.id, { name: stubb.name, content: stubb.content });
 				})
 			)
 			.subscribe(() => {
+				this.cdr.markForCheck();
 				this.notification.showMessage('Stubb was updated');
 			});
 	}
@@ -141,15 +147,43 @@ export class HostComponent implements OnDestroy {
 			})
 			.afterClosed()
 			.pipe(
-				filter((result?: number) => !!result),
-				flatMap((result: number) => {
-					stubb.content.res.status = result;
-					const res = stubb.content.res;
-					const content: StubbFileDto = {
-						...stubb.content,
-						res: { status: result, headers: res.headers, body: res.body }
-					};
-					return this.api.updateStubb(this.id, { name: stubb.name, content });
+				filter((status?: number) => !!status),
+				flatMap((status: number) => {
+					stubb.content.res.status = status;
+					return this.api.updateStubb(this.id, { name: stubb.name, content: stubb.content });
+				})
+			)
+			.subscribe(() => {
+				this.cdr.markForCheck();
+				this.notification.showMessage('Stubb was updated');
+			});
+	}
+
+	private confirmDelete(stubb: StubbDetailsDto): void {
+		this.dialog
+			.open(DialogStubbDeleteComponent)
+			.afterClosed()
+			.pipe(
+				filter((result?: boolean) => result),
+				flatMap(() => this.api.deleteStubb(this.id, stubb))
+			)
+			.subscribe(() => {
+				this.updateData(true);
+				this.notification.showMessage('Stubb was deleted');
+			});
+	}
+
+	private openHeadersEditor(stubb: StubbDetailsDto): void {
+		this.dialog
+			.open(DialogStubbHeadersComponent, {
+				data: stubb
+			})
+			.afterClosed()
+			.pipe(
+				filter((result?: Dictionary<string[]>) => !!result),
+				flatMap((headers: Dictionary<string[]>) => {
+					stubb.content.res.headers = headers;
+					return this.api.updateStubb(this.id, { name: stubb.name, content: stubb.content });
 				})
 			)
 			.subscribe(() => {
@@ -205,7 +239,9 @@ export class HostComponent implements OnDestroy {
 		MaterialModule,
 		HostStatusComponentModule,
 		DialogStubbBodyComponentModule,
-		DialogStubbStatusComponentModule
+		DialogStubbStatusComponentModule,
+		DialogStubbHeadersComponentModule,
+		DialogStubbDeleteComponentModule
 	],
 	exports: [HostComponent]
 })

@@ -74,12 +74,19 @@
 					</mat-list>
 
 					<mat-action-row>
-						<button mat-button color="warn" (click)="deleteStubb(stubb)">
-							Delete
-						</button>
-						<button mat-raised-button color="primary" (click)="showStubbResponseBody(stubb)">
-							Read or Edit response body
-						</button>
+						<div class="dlt-btn">
+							<button mat-button color="warn" (click)="showStubbDelete(stubb)">
+								Delete
+							</button>
+						</div>
+						<div>
+							<button mat-stroked-button color="primary" (click)="showStubbResponseHeaders(stubb)">
+								Edit response headers
+							</button>
+							<button mat-raised-button color="primary" (click)="showStubbResponseBody(stubb)">
+								Edit response body
+							</button>
+						</div>
 					</mat-action-row>
 				</mat-expansion-panel>
 			</mat-accordion>

@@ -114,3 +114,5 @@ release/
 
 # semantic-release artifacts
 semantic-release/
+
+.idea
