@@ -29,7 +29,7 @@ Humock sets the port for each listener automatically, but you can specify it by 
 }
 ```
 
-run `npm start` and visit `http://localhost:3000`.
+run `npm start` and visit `http://localhost:3000`. If you have port 3000 busy, you can run `PORT=3001 npm start` where 3001 is any of your free ports.
 Hummock will start and you would be able to access new entrypoint on localhost: `localhost:6000` and `localhost:8001` (considering the config above)
 
 [Config schema](https://github.com/n0th1ng-else/hummock/blob/master/hummock.json.schema) is located in the project root
