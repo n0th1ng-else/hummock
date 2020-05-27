@@ -9,6 +9,9 @@ import {
 	StubbDetailsDto
 } from '../../../models/types';
 import { cleanupString } from '../../../models/common';
+import { Logger } from '../../log';
+
+const logger = new Logger('tb');
 
 function tapeNameGenerator(tapeNumber: number, tape: Tape): string {
 	return `${tape.req.method}-${cleanupString(tape.req.url)}`;
@@ -28,12 +31,14 @@ export class TalkbackServer implements LauncherService {
 
 	public start(): Promise<void> {
 		if (this.isLaunched()) {
+			logger.info(`${this.server.id} started`);
 			return Promise.resolve();
 		}
 
 		return new Promise(resolve => {
 			this.instance.start(() => {
 				this.stateParam = ServerForRecordState.RUN;
+				logger.info(`${this.server.id} started`);
 				resolve();
 			});
 		});
@@ -41,6 +46,7 @@ export class TalkbackServer implements LauncherService {
 
 	public stop(): Promise<void> {
 		if (!this.isLaunched()) {
+			logger.info(`${this.server.id} in the idle state`);
 			return Promise.resolve();
 		}
 
@@ -49,10 +55,14 @@ export class TalkbackServer implements LauncherService {
 				this.stateParam = ServerForRecordState.IDLE;
 				resolve();
 			});
-		}).then(() => {
-			this.setupMock();
-			return this.server.updateStubbCount();
-		});
+		})
+			.then(() => {
+				this.setupMock();
+				return this.server.updateStubbCount();
+			})
+			.then(() => {
+				logger.info(`${this.server.id} in the idle state`);
+			});
 	}
 
 	public getDto(): Promise<ServerDetailsDto> {

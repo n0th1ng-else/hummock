@@ -23,13 +23,13 @@ function initServer(): express.Application {
 	return app;
 }
 
-function pickGui(app: express.Application, isDevelopment: boolean): Promise<express.Application> {
+function pickGui(app: express.Application, isDevelopment: boolean): Promise<void> {
 	if (isDevelopment) {
 		const compiler = webpack(getConfig(!isDevelopment));
 		app.use(webpackHistoryApiFallback());
 		app.use(webpackDevMiddleware(compiler, getDevServerConfig()));
 		app.use(webpackHotMiddleware(compiler));
-		return Promise.resolve(app);
+		return Promise.resolve();
 	}
 
 	const keepData = true;
@@ -50,7 +50,7 @@ function pickGui(app: express.Application, isDevelopment: boolean): Promise<expr
 			}
 			next();
 		});
-		return Promise.resolve(app);
+		return Promise.resolve();
 	});
 }
 
@@ -58,16 +58,17 @@ export async function startServer(
 	config: HummockConfig,
 	isDevelopment: boolean,
 	port
-): Promise<void> {
+): Promise<() => Promise<void>> {
 	const app = initServer();
-	return pickApiRoutes(app, config)
-		.then(() => (config.enableGui ? pickGui(app, isDevelopment) : app))
-		.then(appServer => {
-			return new Promise(resolve => {
-				appServer.listen(port, () => {
-					logger.info(`${pGreen('Server started.')} Go visit http://localhost:${port} 🚀`);
-					resolve();
-				});
+	return Promise.all([
+		pickApiRoutes(app, config),
+		config.enableGui ? pickGui(app, isDevelopment) : Promise.resolve()
+	]).then(([apiRouter]) => {
+		return new Promise(resolve => {
+			app.listen(port, () => {
+				logger.info(`${pGreen('Server started.')} Go visit http://localhost:${port} 🚀`);
+				resolve(() => apiRouter.stopAll());
 			});
 		});
+	});
 }
