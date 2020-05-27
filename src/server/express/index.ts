@@ -1,6 +1,4 @@
 import * as express from 'express';
-import * as historyApiMiddleware from 'express-history-api-fallback';
-import * as expressStaticGzip from 'express-static-gzip';
 import * as webpack from 'webpack';
 import * as webpackDevMiddleware from 'webpack-dev-middleware';
 import * as webpackHotMiddleware from 'webpack-hot-middleware';
@@ -37,8 +35,21 @@ function pickGui(app: express.Application, isDevelopment: boolean): Promise<expr
 	const keepData = true;
 	return runBuild(keepData, !isDevelopment).then(() => {
 		const paths = new AppPaths();
-		app.use('/', expressStaticGzip(paths.release, {}));
-		app.use(historyApiMiddleware(paths.files.htmlResult, { root: paths.release }));
+
+		app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+			const isJS = /.js$/.test(req.path);
+			const isGet = req.method === 'GET';
+			if (isGet && !isJS) {
+				res.sendFile('index.html', { root: paths.release }, () => next());
+				return;
+			}
+
+			if (isGet && isJS) {
+				res.sendFile(req.path, { root: paths.release }, () => next());
+				return;
+			}
+			next();
+		});
 		return Promise.resolve(app);
 	});
 }
@@ -46,7 +57,7 @@ function pickGui(app: express.Application, isDevelopment: boolean): Promise<expr
 export async function startServer(
 	config: HummockConfig,
 	isDevelopment: boolean,
-	port = 3000
+	port
 ): Promise<void> {
 	const app = initServer();
 	return pickApiRoutes(app, config)

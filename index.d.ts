@@ -2,8 +2,6 @@ declare module '*.less';
 
 declare module 'request-progress';
 
-declare module 'compression-webpack-plugin';
-
 declare module 'terser-webpack-plugin';
 
 declare module 'webpack-dev-middleware';

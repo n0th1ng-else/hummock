@@ -27,7 +27,7 @@ export async function run(options: string[]): Promise<void> {
 		.then(config => checkWiremock(config))
 		.then(config => {
 			logger.info('Starting hummock... 🚀');
-			return startServer(config, isDevelopment);
+			return startServer(config, isDevelopment, Number(process.env.PORT) || 3000);
 		})
 		.catch(err => {
 			logger.error('Something went wrong', err);
