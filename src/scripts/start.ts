@@ -1,3 +1,4 @@
+import * as onDeath from 'death';
 import { Logger } from '../server/log';
 import { validate } from './validate';
 import { startServer } from '../server/express';
@@ -27,7 +28,19 @@ export async function run(options: string[]): Promise<void> {
 		.then(config => checkWiremock(config))
 		.then(config => {
 			logger.info('Starting hummock... 🚀');
-			return startServer(config, isDevelopment);
+			return startServer(config, isDevelopment, Number(process.env.PORT) || 3000);
+		})
+		.then(stopHandler => {
+			onDeath(async () => {
+				logger.warn('Caught the shut down signal. Stopping the service');
+				try {
+					await stopHandler();
+					process.exit();
+				} catch (e) {
+					logger.error('Failed to stop instances', e);
+					process.exit(1);
+				}
+			});
 		})
 		.catch(err => {
 			logger.error('Something went wrong', err);

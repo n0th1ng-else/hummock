@@ -1,5 +1,6 @@
 import talkback from 'talkback/es6';
 import Tape from 'talkback/tape';
+import { nanoid } from 'nanoid';
 import { LauncherService } from '..';
 import { ServerForRecord } from '../../../models/config';
 import {
@@ -9,9 +10,21 @@ import {
 	StubbDetailsDto
 } from '../../../models/types';
 import { cleanupString } from '../../../models/common';
+import { Logger } from '../../log';
+
+const logger = new Logger('tb');
 
 function tapeNameGenerator(tapeNumber: number, tape: Tape): string {
-	return `${tape.req.method}-${cleanupString(tape.req.url)}`;
+	const id = cleanupString(nanoid(7));
+	let host = tape.req.url;
+	try {
+		host = host.split('?')[0];
+	} catch (e) {
+		logger.warn(`Gave up to parse '${tape.req.url}'`);
+		host = tape.req.url;
+	}
+	const hostNoQuery = cleanupString(host);
+	return `${tape.req.method}-${hostNoQuery}-${id}`;
 }
 
 export class TalkbackServer implements LauncherService {
@@ -28,12 +41,14 @@ export class TalkbackServer implements LauncherService {
 
 	public start(): Promise<void> {
 		if (this.isLaunched()) {
+			logger.info(`${this.server.id} started`);
 			return Promise.resolve();
 		}
 
 		return new Promise(resolve => {
 			this.instance.start(() => {
 				this.stateParam = ServerForRecordState.RUN;
+				logger.info(`${this.server.id} started`);
 				resolve();
 			});
 		});
@@ -41,6 +56,7 @@ export class TalkbackServer implements LauncherService {
 
 	public stop(): Promise<void> {
 		if (!this.isLaunched()) {
+			logger.info(`${this.server.id} in the idle state`);
 			return Promise.resolve();
 		}
 
@@ -49,10 +65,14 @@ export class TalkbackServer implements LauncherService {
 				this.stateParam = ServerForRecordState.IDLE;
 				resolve();
 			});
-		}).then(() => {
-			this.setupMock();
-			return this.server.updateStubbCount();
-		});
+		})
+			.then(() => {
+				this.setupMock();
+				return this.server.updateStubbCount();
+			})
+			.then(() => {
+				logger.info(`${this.server.id} in the idle state`);
+			});
 	}
 
 	public getDto(): Promise<ServerDetailsDto> {

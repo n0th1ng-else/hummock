@@ -1,6 +1,4 @@
 import * as express from 'express';
-import * as historyApiMiddleware from 'express-history-api-fallback';
-import * as expressStaticGzip from 'express-static-gzip';
 import * as webpack from 'webpack';
 import * as webpackDevMiddleware from 'webpack-dev-middleware';
 import * as webpackHotMiddleware from 'webpack-hot-middleware';
@@ -25,38 +23,52 @@ function initServer(): express.Application {
 	return app;
 }
 
-function pickGui(app: express.Application, isDevelopment: boolean): Promise<express.Application> {
+function pickGui(app: express.Application, isDevelopment: boolean): Promise<void> {
 	if (isDevelopment) {
 		const compiler = webpack(getConfig(!isDevelopment));
 		app.use(webpackHistoryApiFallback());
 		app.use(webpackDevMiddleware(compiler, getDevServerConfig()));
 		app.use(webpackHotMiddleware(compiler));
-		return Promise.resolve(app);
+		return Promise.resolve();
 	}
 
 	const keepData = true;
 	return runBuild(keepData, !isDevelopment).then(() => {
 		const paths = new AppPaths();
-		app.use('/', expressStaticGzip(paths.release, {}));
-		app.use(historyApiMiddleware(paths.files.htmlResult, { root: paths.release }));
-		return Promise.resolve(app);
+
+		app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+			const isJS = /.js$/.test(req.path);
+			const isGet = req.method === 'GET';
+			if (isGet && !isJS) {
+				res.sendFile('index.html', { root: paths.release }, () => next());
+				return;
+			}
+
+			if (isGet && isJS) {
+				res.sendFile(req.path, { root: paths.release }, () => next());
+				return;
+			}
+			next();
+		});
+		return Promise.resolve();
 	});
 }
 
 export async function startServer(
 	config: HummockConfig,
 	isDevelopment: boolean,
-	port = 3000
-): Promise<void> {
+	port
+): Promise<() => Promise<void>> {
 	const app = initServer();
-	return pickApiRoutes(app, config)
-		.then(() => (config.enableGui ? pickGui(app, isDevelopment) : app))
-		.then(appServer => {
-			return new Promise(resolve => {
-				appServer.listen(port, () => {
-					logger.info(`${pGreen('Server started.')} Go visit http://localhost:${port} 🚀`);
-					resolve();
-				});
+	return Promise.all([
+		pickApiRoutes(app, config),
+		config.enableGui ? pickGui(app, isDevelopment) : Promise.resolve()
+	]).then(([apiRouter]) => {
+		return new Promise(resolve => {
+			app.listen(port, () => {
+				logger.info(`${pGreen('Server started.')} Go visit http://localhost:${port} 🚀`);
+				resolve(() => apiRouter.stopAll());
 			});
 		});
+	});
 }

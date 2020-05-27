@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid';
+import { createHash } from 'crypto';
 import { defaultWiremockVersion, ProxyProvider, firstServerPort } from '../config';
 import {
 	getFilesNumberInDir,
@@ -37,11 +37,12 @@ export interface HummockConfigDto {
 }
 
 export class ServerForRecord {
-	public readonly id = nanoid(5);
+	public readonly id;
 	public readonly workDir: string;
 	public stubbs = 0;
 
 	constructor(public readonly host: string, public readonly port: number, workingDirRoot: string) {
+		this.id = createHash('md5').update(`${host}:${port}`).digest('hex');
 		const hostEscaped = cleanupString(host);
 		this.workDir = getAbsolutePath(workingDirRoot, hostEscaped);
 		this.updateStubbCount();
