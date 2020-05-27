@@ -1,5 +1,6 @@
 import talkback from 'talkback/es6';
 import Tape from 'talkback/tape';
+import { nanoid } from 'nanoid';
 import { LauncherService } from '..';
 import { ServerForRecord } from '../../../models/config';
 import {
@@ -14,7 +15,16 @@ import { Logger } from '../../log';
 const logger = new Logger('tb');
 
 function tapeNameGenerator(tapeNumber: number, tape: Tape): string {
-	return `${tape.req.method}-${cleanupString(tape.req.url)}`;
+	const id = cleanupString(nanoid(7));
+	let host = tape.req.url;
+	try {
+		host = host.split('?')[0];
+	} catch (e) {
+		logger.warn(`Gave up to parse '${tape.req.url}'`);
+		host = tape.req.url;
+	}
+	const hostNoQuery = cleanupString(host);
+	return `${tape.req.method}-${hostNoQuery}-${id}`;
 }
 
 export class TalkbackServer implements LauncherService {
