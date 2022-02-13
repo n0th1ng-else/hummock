@@ -56,7 +56,7 @@
     "@types/node": "12.12.31",
     "@types/progress": "2.0.3",
     "@types/webpack": "4.41.8",
-    "ajv": "6.12.0",
+    "ajv": "6.12.3",
     "awesome-typescript-loader": "5.2.1",
     "axios": "0.19.2",
     "chalk": "3.0.0",
